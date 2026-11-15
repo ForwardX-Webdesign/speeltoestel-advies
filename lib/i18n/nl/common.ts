@@ -25,6 +25,12 @@ const common: Record<string, string> = {
   "Your change is usually live within a few minutes.":
     "Je wijziging staat meestal binnen een paar minuten op de website.",
   "View page": "Bekijk pagina",
+  "Help": "Uitleg",
+  "Back": "Terug",
+  "Short guides for the things you do most often.":
+    "Korte uitleg bij de dingen die je het vaakst doet.",
+  "Can't find what you need?": "Kom je er niet uit?",
+  "Contact {name}": "Neem contact op met {name}",
 };
 
 export default common;

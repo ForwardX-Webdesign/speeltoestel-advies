@@ -1,5 +1,6 @@
 "use client";
 
+import { t } from "@/lib/i18n";
 import { useMemo, useState } from "react";
 import { useConfig } from "@/contexts/config-context";
 import { getParentPath, getRelativePath, joinPathSegments, normalizePath } from "@/lib/utils/file";
@@ -86,7 +87,7 @@ export function FileOptions({
             method: "DELETE",
           });
 
-          const data = await requireApiSuccess<any>(response, "Failed to delete file");
+          const data = await requireApiSuccess<any>(response, t(t(t("Failed to delete file"))));
 
           resolve(data);
         } catch (error) {
@@ -95,7 +96,7 @@ export function FileOptions({
       });
 
       toast.promise(deletePromise, {
-        loading: `Deleting ${path}`,
+        loading: t("Deleting {path}", { path }),
         success: (data: any) => {
           if (onDelete) onDelete(path);
           return data.message;
@@ -117,7 +118,7 @@ export function FileOptions({
           <DropdownMenuContent align="end" portalProps={portalProps}>
             <DropdownMenuItem asChild>
               <a href={`https://github.com/${config.owner}/${config.repo}/blob/${encodeURIComponent(config.branch)}/${path}`} target="_blank">
-                View on GitHub
+                {t("View on GitHub")}
                 <ArrowUpRight className="size-3 text-muted-foreground ml-auto" />
               </a>
             </DropdownMenuItem>
@@ -126,13 +127,13 @@ export function FileOptions({
                   <DropdownMenuSeparator />
                   {showRename &&
                     <DropdownMenuItem onSelect={() => setIsRenameOpen(true)}>
-                      Rename
+                      {t("Rename")}
                     </DropdownMenuItem>
                   }
                   {showDelete && (
                     <AlertDialogTrigger asChild>
                       <DropdownMenuItem variant="destructive">
-                        Delete
+                        {t("Delete")}
                       </DropdownMenuItem>
                     </AlertDialogTrigger>
                   )}
@@ -142,12 +143,12 @@ export function FileOptions({
           </DropdownMenuContent>
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>Are you sure you want to delete this file?</AlertDialogTitle>
-              <AlertDialogDescription>This will premanently delete &quot;{path}&quot;.</AlertDialogDescription>
+              <AlertDialogTitle>{t("Are you sure you want to delete this file?")}</AlertDialogTitle>
+              <AlertDialogDescription>{t("This will permanently delete \"{path}\".", { path })}</AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction onClick={handleConfirmDelete}>Delete</AlertDialogAction>
+              <AlertDialogCancel>{t("Cancel")}</AlertDialogCancel>
+              <AlertDialogAction onClick={handleConfirmDelete}>{t("Delete")}</AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
         </DropdownMenu>

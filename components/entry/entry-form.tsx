@@ -1,5 +1,6 @@
 "use client";
 
+import { t } from "@/lib/i18n";
 import {
   memo,
   useState,
@@ -151,7 +152,7 @@ const getCollapsibleItemLabel = (
     );
   }
 
-  return `Item ${index !== undefined ? `#${index + 1}` : ""}`;
+  return `${t("Item")} ${index !== undefined ? `#${index + 1}` : ""}`;
 };
 
 const hasCollapsibleSummary = (field: Field) =>
@@ -279,20 +280,20 @@ const ListItemRow = memo(function ListItemRow({
             </TooltipTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
-                <AlertDialogTitle>Remove this item?</AlertDialogTitle>
+                <AlertDialogTitle>{t("Remove this item?")}</AlertDialogTitle>
                 <AlertDialogDescription>
-                  This action cannot be undone.
+                  {t("This action cannot be undone.")}
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogCancel>{t("Cancel")}</AlertDialogCancel>
                 <AlertDialogAction onClick={() => onRemoveConfirm(index)}>
-                  Remove
+                  {t("Remove")}
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
-          <TooltipContent>Remove item</TooltipContent>
+          <TooltipContent>{t("Remove item")}</TooltipContent>
         </Tooltip>
       )}
     </SortableItem>
@@ -475,13 +476,13 @@ const ListField = ({
               {field.required && (
                 <Badge variant="secondary" className="text-muted-foreground">
                   <Asterisk className="-ml-1 -mr-0.5" />
-                  Required
+                  {t("Required")}
                 </Badge>
               )}
               {hasExplicitReadonly(field) && (
                 <Badge variant="secondary" className="text-muted-foreground">
                   <Ban className="-ml-0.5" />
-                  Readonly
+                  {t("Readonly")}
                 </Badge>
               )}
               {isCollapsible &&
@@ -498,7 +499,7 @@ const ListField = ({
                       onClick={() => toggleAll(isAllExpanded)}
                     >
                       {isAllExpanded ? <ChevronsDownUp /> : <ChevronsUpDown />}
-                      {isAllExpanded ? "Collapse all" : "Expand all"}
+                      {isAllExpanded ? t("Collapse all") : t("Expand all")}
                     </Button>
                   );
                 })()}
@@ -546,7 +547,7 @@ const ListField = ({
                   onClick={addItem}
                 >
                   <Plus />
-                  Add an item
+                  {t("Add an item")}
                 </Button>
               )}
             </div>
@@ -628,7 +629,7 @@ const BlocksField = forwardRef<HTMLDivElement, NestedFieldProps>(
       <div className="space-y-3" ref={ref as React.Ref<HTMLDivElement>}>
         {!selectedBlockDefinition ? (
           <div className="rounded-lg border p-4 space-y-4">
-            <div className="text-sm">Choose content block:</div>
+            <div className="text-sm">{t("Choose content block:")}</div>
             <div className="flex flex-wrap gap-2">
               {blocks.map((blockDef: Field) => (
                 <Button
@@ -704,26 +705,26 @@ const BlocksField = forwardRef<HTMLDivElement, NestedFieldProps>(
                       >
                         <AlertDialogHeader>
                           <AlertDialogTitle>
-                            Remove this block?
+                            {t("Remove this block?")}
                           </AlertDialogTitle>
                           <AlertDialogDescription>
-                            This action cannot be undone.
+                            {t("This action cannot be undone.")}
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogCancel>{t("Cancel")}</AlertDialogCancel>
                           <AlertDialogAction
                             onClick={() => {
                               handleRemoveBlock();
                               setIsRemoveBlockDialogOpen(false);
                             }}
                           >
-                            Remove
+                            {t("Remove")}
                           </AlertDialogAction>
                         </AlertDialogFooter>
                       </AlertDialogContent>
                     </AlertDialog>
-                    <TooltipContent>Remove block</TooltipContent>
+                    <TooltipContent>{t("Remove block")}</TooltipContent>
                   </Tooltip>
                 )}
               </Badge>
@@ -818,7 +819,7 @@ const ObjectField = forwardRef<HTMLDivElement, NestedFieldProps>(
         index={index}
       />
     ) : (
-      `Item ${index !== undefined ? `#${index + 1}` : ""}`
+      `${t("Item")} ${index !== undefined ? `#${index + 1}` : ""}`
     );
 
     return (
@@ -923,13 +924,13 @@ const SingleField = ({
             {field.required && (
               <Badge variant="secondary" className="text-muted-foreground">
                 <Asterisk className="-ml-1 -mr-0.5" />
-                Required
+                {t("Required")}
               </Badge>
             )}
             {hasExplicitReadonly(field) && (
               <Badge variant="secondary" className="text-muted-foreground">
                 <Ban className="-ml-0.5" />
-                Readonly
+                {t("Readonly")}
               </Badge>
             )}
           </div>
@@ -979,7 +980,7 @@ const SingleField = ({
                       className="text-muted-foreground"
                     >
                       <Asterisk className="-ml-1 -mr-0.5" />
-                      Required
+                      {t("Required")}
                     </Badge>
                   )}
                   {hasExplicitReadonly(field) && (
@@ -988,7 +989,7 @@ const SingleField = ({
                       className="text-muted-foreground"
                     >
                       <Ban className="-ml-0.5" />
-                      Readonly
+                      {t("Readonly")}
                     </Badge>
                   )}
                 </div>
@@ -1146,7 +1147,7 @@ const EntryForm = ({
   );
 
   const handleError = () => {
-    toast.error("Please fix the errors before saving.", { duration: 5000 });
+    toast.error(t("Please fix the errors before saving."), { duration: 5000 });
   };
 
   const handleFormSubmit = useCallback(
@@ -1167,7 +1168,7 @@ const EntryForm = ({
       >
         {filePath && (
           <div className="space-y-2 overflow-hidden">
-            <FormLabel>Filename</FormLabel>
+            <FormLabel>{t("Filename")}</FormLabel>
             {filePath}
           </div>
         )}

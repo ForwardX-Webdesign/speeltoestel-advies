@@ -106,9 +106,9 @@ export function Entry({
   const [displayTitle, setDisplayTitle] = useState<string>(() => {
     if (title) return title;
     if (initialPath && initialPath !== ".pages.yml") {
-      return `Editing "${getFileName(normalizePath(initialPath))}"`;
+      return t("Editing \"{name}\"", { name: getFileName(normalizePath(initialPath)) });
     }
-    return "Edit";
+    return t("Edit");
   });
   const [isLoading, setIsLoading] = useState(path ? true : false);
   const [isSaving, setIsSaving] = useState(false);
@@ -169,7 +169,7 @@ export function Entry({
       ? [{
           name: "body",
           type: "code",
-          label: showFilenameField ? "Content" : false,
+          label: showFilenameField ? t("Content") : false,
           options: {
             format: schema?.extension || (entry?.name && getFileExtension(entry.name)) || "markdown",
             lintFn: path === ".pages.yml"
@@ -225,7 +225,7 @@ export function Entry({
     const response = await fetch(apiUrl);
     const data = await requireApiSuccess<any>(
       response,
-      "Failed to fetch entry",
+      t("Failed to fetch entry"),
     );
     return data.data as EntryData;
   }, []);
@@ -269,15 +269,15 @@ export function Entry({
       const titleValue = hasPrimaryValue
         ? String(primaryValue)
         : getFileName(normalizePath(path));
-      setDisplayTitle(`Editing "${titleValue}"`);
+      setDisplayTitle(t("Editing \"{name}\"", { name: titleValue }));
     } else if (!title && path && path !== ".pages.yml") {
-      setDisplayTitle(`Editing "${getFileName(normalizePath(path))}"`);
+      setDisplayTitle(t("Editing \"{name}\"", { name: getFileName(normalizePath(path)) }));
     }
   }, [initialPath, path, schema, swrEntryData, title]);
 
   useEffect(() => {
     if (!swrEntryError) return;
-    const message = swrEntryError instanceof Error ? swrEntryError.message : "Failed to fetch entry.";
+    const message = swrEntryError instanceof Error ? swrEntryError.message : t("Failed to fetch entry.");
     setError(message);
     setIsLoading(false);
   }, [swrEntryError]);
@@ -297,7 +297,7 @@ export function Entry({
     const response = await fetch(apiUrl);
     const data = await requireApiSuccess<any>(
       response,
-      "Failed to fetch entry's history",
+      t("Failed to fetch entry's history"),
     );
     return data.data as EntryHistoryItem[];
   }, []);
@@ -331,20 +331,20 @@ export function Entry({
         const normalizedFilename = normalizePath(trimmedFilename).split("/").pop() || "";
 
         if (showFilenameField && !normalizedFilename) {
-          throw new Error("Filename is required.");
+          throw new Error(t("Filename is required."));
         }
 
         if (!savePath) {
-          if (!schema) throw new Error("Cannot create entry without schema.");
-          if (!canCreate) throw new Error("Creating entries in this content item isn't allowed.");
+          if (!schema) throw new Error(t("Cannot create entry without schema."));
+          if (!canCreate) throw new Error(t("Creating entries in this content item isn't allowed."));
           const basePath = parent ?? schema.path;
-          if (basePath == null) throw new Error("Cannot create entry without a target path.");
+          if (basePath == null) throw new Error(t("Cannot create entry without a target path."));
           const generatedFilename = showFilenameField
             ? normalizedFilename
             : generateFilename(schema.filename, schema, contentObject);
           savePath = joinPathSegments([basePath, generatedFilename]);
         } else if (filenameChanged && !canRename && schemaType === "collection") {
-          throw new Error("Renaming this entry isn't allowed.");
+          throw new Error(t("Renaming this entry isn't allowed."));
         } else if (
           showFilenameField
           && filenameFieldMode === "enabled"
@@ -365,7 +365,7 @@ export function Entry({
               }),
             },
           );
-          await requireApiSuccess<any>(renameResponse, "Failed to rename file");
+          await requireApiSuccess<any>(renameResponse, t("Failed to rename file"));
           savePath = newPath;
           setPath(newPath);
           setIsFilenameUnlocked(false);
@@ -389,7 +389,7 @@ export function Entry({
         });
         const data = await requireApiSuccess<any>(
           response,
-          "Failed to save file",
+          t("Failed to save file"),
         );
         
         if (data.data.sha !== sha) setSha(data.data.sha);
@@ -410,7 +410,7 @@ export function Entry({
     });
 
     toast.promise(savePromise, {
-      loading: "Saving your file",
+      loading: t("Saving your file"),
       success: (response: ApiSuccess<EntryData>) => {
         if (onSave) onSave(response.data);
         const savedPreviewUrl = previewUrlRef.current;
@@ -426,7 +426,7 @@ export function Entry({
           },
         };
       },
-      error: (error: unknown) => error instanceof Error ? error.message : "Failed to save file.",
+      error: (error: unknown) => error instanceof Error ? error.message : t("Failed to save file."),
     });
 
     try {
@@ -587,7 +587,7 @@ export function Entry({
               <DropdownMenu>
                 <DropdownMenuTrigger className="flex items-center">
                   <BreadcrumbEllipsis className="h-4 w-4" />
-                  <span className="sr-only">Show hidden segments</span>
+                  <span className="sr-only">{t("Show hidden segments")}</span>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="start">
                   {middleEntries.map((entry) => (
@@ -754,10 +754,10 @@ export function Entry({
                 )
               )
             }
-            aria-label="Save"
+            aria-label={t("Save")}
           >
             <Save className="size-4 sm:hidden" />
-            <span className="hidden sm:inline">Save</span>
+            <span className="hidden sm:inline">{t("Save")}</span>
           </Button>
           {path && (
             <ButtonGroup>
@@ -830,18 +830,18 @@ export function Entry({
         <div className="absolute inset-0 p-4 md:p-6 flex items-center justify-center">
           <Empty className="max-w-[420px] flex-none">
             <EmptyHeader>
-              <EmptyTitle>{isSettingsPage ? "Configuration not found" : "File not found"}</EmptyTitle>
+              <EmptyTitle>{isSettingsPage ? t("Configuration not found") : t("File not found")}</EmptyTitle>
               <EmptyDescription>
                 {isSettingsPage
-                  ? "The configuration file \".pages.yml\" does not exist yet."
-                  : `The file "${path ?? schema?.path ?? "unknown"}" does not exist yet.`}
+                  ? t("The configuration file \".pages.yml\" does not exist yet.")
+                  : t("The file \"{path}\" does not exist yet.", { path: path ?? schema?.path ?? t("unknown") })}
               </EmptyDescription>
             </EmptyHeader>
             <EmptyContent>
               {isSettingsPage ? (
-                <EmptyCreate type="settings">Create configuration file</EmptyCreate>
+                <EmptyCreate type="settings">{t("Create configuration file")}</EmptyCreate>
               ) : canCreate ? (
-                <EmptyCreate type="content" name={schema?.name ?? name}>Create file</EmptyCreate>
+                <EmptyCreate type="content" name={schema?.name ?? name}>{t("Create file")}</EmptyCreate>
               ) : null}
             </EmptyContent>
           </Empty>
@@ -852,7 +852,7 @@ export function Entry({
         <div className="absolute inset-0 p-4 md:p-6 flex items-center justify-center">
           <Empty className="max-w-[420px] flex-none">
             <EmptyHeader>
-              <EmptyTitle>Something went wrong</EmptyTitle>
+              <EmptyTitle>{t("Something went wrong")}</EmptyTitle>
               <EmptyDescription>{error}</EmptyDescription>
             </EmptyHeader>
             <EmptyContent>
@@ -860,7 +860,7 @@ export function Entry({
                 className="inline-flex items-center justify-center rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground shadow-xs hover:bg-primary/90"
                 href={`/${config.owner}/${config.repo}/${encodeURIComponent(config.branch)}/configuration`}
               >
-                Go to configuration
+                {t("Go to configuration")}
               </Link>
             </EmptyContent>
           </Empty>
@@ -874,9 +874,9 @@ export function Entry({
       <div className="absolute inset-0 p-4 md:p-6 flex items-center justify-center">
         <Empty className="max-w-[420px] flex-none">
           <EmptyHeader>
-            <EmptyTitle>Creating entries is disabled</EmptyTitle>
+            <EmptyTitle>{t("Creating entries is disabled")}</EmptyTitle>
             <EmptyDescription>
-              New entries are not allowed for this collection.
+              {t("New entries are not allowed for this collection.")}
             </EmptyDescription>
           </EmptyHeader>
           <EmptyContent>
@@ -884,7 +884,7 @@ export function Entry({
               className="inline-flex items-center justify-center rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground shadow-xs hover:bg-primary/90"
               href={`/${config.owner}/${config.repo}/${encodeURIComponent(config.branch)}/collection/${encodeURIComponent(name)}`}
             >
-              Back to collection
+              {t("Back to collection")}
             </Link>
           </EmptyContent>
         </Empty>
@@ -905,9 +905,9 @@ export function Entry({
                 <InputGroupInput
                   value={filenameValue}
                   onChange={(event) => setFilenameValue(event.target.value)}
-                  placeholder="Filename"
+                  placeholder={t("Filename")}
                   disabled={path ? !isFilenameUnlocked : false}
-                  aria-label="Filename"
+                  aria-label={t("Filename")}
                 />
                 {path && filenameFieldMode === "enabled" && canRename && (
                   <InputGroupAddon align="inline-end">
@@ -918,7 +918,7 @@ export function Entry({
                           variant="ghost"
                           size="icon-xs"
                           onClick={() => setIsFilenameUnlocked((prev) => !prev)}
-                          aria-label={isFilenameUnlocked ? "Lock filename" : "Unlock filename"}
+                          aria-label={isFilenameUnlocked ? t("Lock filename") : t("Unlock filename")}
                         >
                           {isFilenameUnlocked
                             ? <LockOpen className="size-3.5" />
@@ -926,7 +926,7 @@ export function Entry({
                         </InputGroupButton>
                       </TooltipTrigger>
                       <TooltipContent>
-                        {isFilenameUnlocked ? "Lock filename" : "Unlock to edit"}
+                        {isFilenameUnlocked ? t("Lock filename") : t("Unlock to edit")}
                       </TooltipContent>
                     </Tooltip>
                   </InputGroupAddon>

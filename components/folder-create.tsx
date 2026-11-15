@@ -1,5 +1,6 @@
 "use client";
 
+import { t } from "@/lib/i18n";
 import { useState } from "react";
 import { useConfig } from "@/contexts/config-context";
 import { joinPathSegments, normalizePath } from "@/lib/utils/file";
@@ -45,7 +46,7 @@ const FolderCreate = ({
   const handleCreate = async () => {
     const normalizedFolderInput = normalizePath(folderPath.trim());
     if (!normalizedFolderInput) {
-      toast.error("Folder name is required.");
+      toast.error(t("Folder name is required."));
       return;
     }
 
@@ -73,22 +74,22 @@ const FolderCreate = ({
         const payload = await response.json().catch(() => null);
         if (!response.ok) {
           if (response.status === 409) {
-            throw new Error(`Folder \"${fullNewPath}\" already exists.`);
+            throw new Error(t("Folder \"{path}\" already exists.", { path: fullNewPath }));
           }
 
-          throw new Error(payload?.message || "Failed to create folder");
+          throw new Error(payload?.message || t("Failed to create folder"));
         }
 
         if (!payload || payload.status !== "success") {
-          throw new Error(payload?.message || "Failed to create folder");
+          throw new Error(payload?.message || t("Failed to create folder"));
         }
 
         return payload;
       });
 
       await toast.promise(createPromise, {
-        loading: `Creating folder "${fullNewPath}"`,
-        success: `Folder "${fullNewPath}" created successfully.`,
+        loading: t("Creating folder \"{path}\"", { path: fullNewPath }),
+        success: t("Folder \"{path}\" created successfully.", { path: fullNewPath }),
         error: (error: any) => error.message,
       });
 
@@ -119,8 +120,8 @@ const FolderCreate = ({
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Create a folder</DialogTitle>
-          <DialogDescription>Choose a name for the folder to create{path ? ` under "${normalizePath(path)}"` : null}.</DialogDescription>
+          <DialogTitle>{t("Create a folder")}</DialogTitle>
+          <DialogDescription>{path ? t("Choose a name for the folder to create under \"{path}\".", { path: normalizePath(path) }) : t("Choose a name for the folder to create.")}</DialogDescription>
         </DialogHeader>
         <form
           onSubmit={async (event) => {
@@ -136,9 +137,9 @@ const FolderCreate = ({
           />
           <DialogFooter>
             <DialogClose asChild>
-              <Button type="button" variant="secondary" disabled={isSubmitting}>Cancel</Button>
+              <Button type="button" variant="secondary" disabled={isSubmitting}>{t("Cancel")}</Button>
             </DialogClose>
-            <Button type="submit" disabled={isSubmitting || !folderPath.trim()}>Create</Button>
+            <Button type="submit" disabled={isSubmitting || !folderPath.trim()}>{t("Create")}</Button>
           </DialogFooter>
         </form>
       </DialogContent>

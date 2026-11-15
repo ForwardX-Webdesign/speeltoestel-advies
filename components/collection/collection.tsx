@@ -1,5 +1,6 @@
 "use client";
 
+import { t } from "@/lib/i18n";
 import {
   Fragment,
   memo,
@@ -123,7 +124,7 @@ const CollectionHeaderActions = memo(function CollectionHeaderActions({
           className="pl-9"
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
-          placeholder="Search entries..."
+          placeholder={t("Search entries...")}
         />
       </div>
       {showFolderCreate && (
@@ -147,7 +148,7 @@ const CollectionHeaderActions = memo(function CollectionHeaderActions({
               </FolderCreate>
             </div>
           </TooltipTrigger>
-          <TooltipContent>Create folder</TooltipContent>
+          <TooltipContent>{t("Create folder")}</TooltipContent>
         </Tooltip>
       )}
       {showAddEntry && (
@@ -156,7 +157,7 @@ const CollectionHeaderActions = memo(function CollectionHeaderActions({
             className={cn(buttonVariants(), "hidden sm:flex")}
             href={addEntryHref}
           >
-            Add an entry
+            {t("Add an entry")}
           </Link>
           <Link
             className={cn(buttonVariants({ size: "icon" }), "sm:hidden shrink-0")}
@@ -217,7 +218,7 @@ export function Collection({ name, path }: { name: string; path?: string }) {
       pathAndFieldArray.push({
         path: "name",
         field: {
-          label: "Name",
+          label: t("Name"),
           name: "name",
           type: "string",
         },
@@ -235,7 +236,7 @@ export function Collection({ name, path }: { name: string; path?: string }) {
       pathAndFieldArray.push({
         path: "date",
         field: {
-          label: "Date",
+          label: t("Date"),
           name: "date",
           type: "date",
         },
@@ -277,7 +278,7 @@ export function Collection({ name, path }: { name: string; path?: string }) {
   const fetchCollectionByUrl = useCallback(
     async (apiUrl: string): Promise<Record<string, any>[]> => {
       const response = await fetch(apiUrl);
-      const result = await requireApiSuccess<any>(response, "Fetch failed");
+      const result = await requireApiSuccess<any>(response, t("Fetch failed"));
 
       if (result.data.errors?.length) {
         result.data.errors.forEach((e: any) => toast.error(e));
@@ -327,7 +328,7 @@ export function Collection({ name, path }: { name: string; path?: string }) {
     setError(
       swrCollectionError instanceof Error
         ? swrCollectionError.message
-        : "Fetch failed",
+        : t("Fetch failed"),
     );
   }, [swrCollectionError]);
 
@@ -349,7 +350,7 @@ export function Collection({ name, path }: { name: string; path?: string }) {
           setError(err.message);
         } else {
           toast.error(
-            `Could not load items inside ${getFileName(fetchPath)}: ${err.message}`,
+            t("Could not load items inside {name}: {message}", { name: getFileName(fetchPath), message: err.message }),
           );
         }
         return undefined;
@@ -461,7 +462,7 @@ export function Collection({ name, path }: { name: string; path?: string }) {
             );
             const data = await requireApiSuccess<any>(
               response,
-              "Failed to rename file",
+              t("Failed to rename file"),
             );
 
             resolve(data);
@@ -471,7 +472,7 @@ export function Collection({ name, path }: { name: string; path?: string }) {
         });
 
         toast.promise(renamePromise, {
-          loading: `Renaming "${path}" to "${newPath}"`,
+          loading: t("Renaming \"{path}\" to \"{newPath}\"", { path, newPath }),
           success: (data: any) => {
             router.push(
               `/${config.owner}/${config.repo}/${encodeURIComponent(config.branch)}/collection/${encodeURIComponent(name)}/new?parent=${encodeURIComponent(getParentPath(normalizedNewPath))}`,
@@ -539,7 +540,7 @@ export function Collection({ name, path }: { name: string; path?: string }) {
 
     tableColumns.push({
       accessorKey: "actions",
-      header: "Actions",
+      header: t("Actions"),
       cell: ({ row }: { row: any }) => (
         <div className="flex gap-1 justify-end">
           {row.original.type === "file" && (
@@ -550,7 +551,7 @@ export function Collection({ name, path }: { name: string; path?: string }) {
                 )}
                 href={`/${config.owner}/${config.repo}/${encodeURIComponent(config.branch)}/collection/${name}/edit/${encodeURIComponent(row.original.path)}`}
               >
-                Edit
+                {t("Edit")}
               </Link>
               <FileOptions
                 path={row.original.path}
@@ -590,23 +591,23 @@ export function Collection({ name, path }: { name: string; path?: string }) {
                       </Button>
                     </AlertDialogTrigger>
                   </TooltipTrigger>
-                  <TooltipContent>Add children entry</TooltipContent>
+                  <TooltipContent>{t("Add children entry")}</TooltipContent>
                 </Tooltip>
                 <AlertDialogContent>
                   <AlertDialogHeader>
-                    <AlertDialogTitle>Rename this file first?</AlertDialogTitle>
+                    <AlertDialogTitle>{t("Rename this file first?")}</AlertDialogTitle>
                     <AlertDialogDescription>
-                      Before adding children to this file, you must rename it
-                      from &quot;{row.original.path}&quot; to &quot;
-                      {row.original.path.replace(
-                        `.${schema.extension}`,
-                        `/${schema.view?.node?.filename}`,
-                      )}
-                      &quot;.
+                      {t("Before adding children to this file, you must rename it from \"{from}\" to \"{to}\".", {
+                        from: row.original.path,
+                        to: row.original.path.replace(
+                          `.${schema.extension}`,
+                          `/${schema.view?.node?.filename}`,
+                        ),
+                      })}
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogCancel>{t("Cancel")}</AlertDialogCancel>
                     <AlertDialogAction
                       onClick={() =>
                         handleConfirmRenameNode(
@@ -618,7 +619,7 @@ export function Collection({ name, path }: { name: string; path?: string }) {
                         )
                       }
                     >
-                      Rename
+                      {t("Rename")}
                     </AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
@@ -643,7 +644,7 @@ export function Collection({ name, path }: { name: string; path?: string }) {
                     <Plus className="size-4" />
                   </Link>
                 </TooltipTrigger>
-                <TooltipContent>Add children entry</TooltipContent>
+                <TooltipContent>{t("Add children entry")}</TooltipContent>
               </Tooltip>
             ))}
         </div>
@@ -770,7 +771,7 @@ export function Collection({ name, path }: { name: string; path?: string }) {
                 <div className="flex gap-1 justify-end">
                   <ButtonGroup>
                     <Button variant="outline" size="sm" disabled>
-                      Edit
+                      {t("Edit")}
                     </Button>
                     <Button variant="outline" size="icon-sm" disabled>
                       <EllipsisVertical className="size-4" />
@@ -865,7 +866,7 @@ export function Collection({ name, path }: { name: string; path?: string }) {
                 <DropdownMenu>
                   <DropdownMenuTrigger className="flex items-center">
                     <BreadcrumbEllipsis className="size-4" />
-                    <span className="sr-only">Show hidden segments</span>
+                    <span className="sr-only">{t("Show hidden segments")}</span>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="start">
                     {middleEntries.map((entry) => (
@@ -988,12 +989,12 @@ export function Collection({ name, path }: { name: string; path?: string }) {
         <EmptyHeader>
           <EmptyTitle>
             {error === "Not found"
-              ? "Folder not found"
-              : "Something went wrong"}
+              ? t("Folder not found")
+              : t("Something went wrong")}
           </EmptyTitle>
           <EmptyDescription>
             {error === "Not found"
-              ? `The collection folder "${schema.path}" does not exist yet.`
+              ? t("The collection folder \"{path}\" does not exist yet.", { path: schema.path })
               : error}
           </EmptyDescription>
         </EmptyHeader>
@@ -1001,7 +1002,7 @@ export function Collection({ name, path }: { name: string; path?: string }) {
           {error === "Not found" ? (
             canCreate ? (
               <EmptyCreate type="content" name={schema.name}>
-                Create folder
+                {t("Create folder")}
               </EmptyCreate>
             ) : null
           ) : (
@@ -1009,7 +1010,7 @@ export function Collection({ name, path }: { name: string; path?: string }) {
               className={buttonVariants({ variant: "default" })}
               href={`/${config.owner}/${config.repo}/${encodeURIComponent(config.branch)}/settings`}
             >
-              Go to settings
+              {t("Go to settings")}
             </Link>
           )}
         </EmptyContent>

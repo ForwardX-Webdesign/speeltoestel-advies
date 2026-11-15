@@ -1,5 +1,6 @@
 "use client";
 
+import { t } from "@/lib/i18n";
 import { use } from "react";
 import { useSearchParams } from "next/navigation";
 import { DocumentTitle, formatRepoBranchTitle } from "@/components/document-title";
@@ -30,9 +31,9 @@ export default function Page({
   return (
     <>
       <DocumentTitle
-        title={formatRepoBranchTitle(`New entry | ${displayName}`, config.owner, config.repo, config.branch)}
+        title={formatRepoBranchTitle(`${t("New entry")} | ${displayName}`, config.owner, config.repo, config.branch)}
       />
-      <Entry name={schemaName} title="New entry" parent={parent}/>
+      <Entry name={schemaName} title={t("New entry")} parent={parent}/>
     </>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { formatDistanceToNow } from "date-fns";
+import { t, timeAgo } from "@/lib/i18n";
 import { getInitialsFromName } from "@/lib/utils/avatar";
 import { useConfig } from "@/contexts/config-context";
 import type { EntryHistoryItem } from "@/types/api";
@@ -26,19 +26,19 @@ function HistoryItemContent({
   item: EntryHistoryItem;
   compact?: boolean;
 }) {
-  const authorName = item.commit.author?.name || item.author?.login || "Unknown author";
+  const authorName = item.commit.author?.name || item.author?.login || t("Unknown author");
   const authorDate = item.commit.author?.date ? new Date(item.commit.author.date) : null;
 
   return (
     <>
       <Avatar className={compact ? "size-7" : "h-8 w-8"}>
-        <AvatarImage src={item.author?.login ? `https://github.com/${item.author.login}.png` : undefined} alt={`${authorName}'s avatar`} />
+        <AvatarImage src={item.author?.login ? `https://github.com/${item.author.login}.png` : undefined} alt={t("{name}'s avatar", { name: authorName })} />
         <AvatarFallback>{getInitialsFromName(authorName)}</AvatarFallback>
       </Avatar>
       <div className={compact ? "text-left overflow-hidden" : "text-left overflow-hidden ml-3"}>
         <div className={compact ? "truncate" : "text-sm font-medium truncate"}>{authorName}</div>
         <div className="text-xs text-muted-foreground truncate">
-          {authorDate ? `${formatDistanceToNow(authorDate)} ago` : "Unknown date"}
+          {authorDate ? timeAgo(authorDate) : t("Unknown date")}
         </div>
       </div>
     </>
@@ -76,7 +76,7 @@ export function EntryHistoryBlock({
           rel="noopener noreferrer"
           className="flex items-center rounded-lg px-3 py-2 transition-all hover:bg-accent ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
         >
-          <span className="mr-4">See all changes</span>
+          <span className="mr-4">{t("See all changes")}</span>
           {/* <ArrowUpRight className="h-3 w-3 ml-auto min-ml-4 opacity-50" /> */}
         </a>
       )}
@@ -130,7 +130,7 @@ export function EntryHistoryDropdown({
             rel="noopener noreferrer"
             className="flex items-center w-full"
           >
-            View on GitHub
+            {t("View on GitHub")}
             <ArrowUpRight className="size-3 text-muted-foreground ml-auto" />
           </a>
         </DropdownMenuItem>}

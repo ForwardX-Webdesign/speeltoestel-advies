@@ -1,5 +1,6 @@
 "use client";
 
+import { t } from "@/lib/i18n";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Loader as LucideLoader } from "lucide-react";
@@ -34,7 +35,7 @@ const EmptyCreate = ({
 
   if (type === "settings") {
     path = ".pages.yml";
-    toCreate = "configuration file";
+    toCreate = t("configuration file");
     redirectTo = `${redirectTo}/configuration`;
   } else if (type === "content" || type === "media") {
     if (!name) throw new Error(`"name" is required.`);
@@ -43,12 +44,12 @@ const EmptyCreate = ({
 
     if (type === "media") {
       path = `${schema.input}/.gitkeep`;
-      toCreate = "media folder";
+      toCreate = t("media folder");
       redirectTo = `${redirectTo}/media/${schema.name}`;
     } else {
       if (schema.type === "file") {
         path = schema.path;
-        toCreate = "file";
+        toCreate = t("file");
         if (schema.list) {
           // Root-level list files must serialize as an array.
           content = [];
@@ -58,7 +59,7 @@ const EmptyCreate = ({
         }
       } else {
         path = `${schema.path}/.gitkeep`;
-        toCreate = "collection folder";
+        toCreate = t("collection folder");
       }
       redirectTo = `${redirectTo}/${schema.type}/${schema.name}`;
     }
@@ -69,7 +70,7 @@ const EmptyCreate = ({
   const handleCreate = async () => {
     if (isCreating) return;
     setIsCreating(true);
-    const toastId = toast.loading(`Creating ${toCreate}...`);
+    const toastId = toast.loading(t("Creating {item}...", { item: toCreate }));
 
     try {
       const response = await fetch(`/api/${config.owner}/${config.repo}/${encodeURIComponent(config.branch)}/files/${encodeURIComponent(normalizePath(path))}`, {
@@ -84,18 +85,18 @@ const EmptyCreate = ({
       });
       await requireApiSuccess<any>(
         response,
-        `Failed to create ${toCreate}`,
+        t("Failed to create {item}", { item: toCreate }),
       );
 
-      toast.loading(`Opening ${toCreate}...`, { id: toastId });
+      toast.loading(t("Opening {item}...", { item: toCreate }), { id: toastId });
       onCreate?.(normalizePath(path));
       // Navigate immediately so destination route can render its loading skeleton.
       router.push(`${redirectTo}?empty-created`);
       router.refresh();
-      toast.success(`Created ${toCreate}. Opening...`, { id: toastId });
+      toast.success(t("Created {item}. Opening...", { item: toCreate }), { id: toastId });
     } catch (error) {
       setIsCreating(false);
-      toast.error(error instanceof Error ? error.message : `Failed to create ${toCreate}.`, {
+      toast.error(error instanceof Error ? error.message : t("Failed to create {item}.", { item: toCreate }), {
         id: toastId,
       });
     }
@@ -105,7 +106,7 @@ const EmptyCreate = ({
     <Button type="button" onClick={handleCreate} disabled={isCreating}>
       {isCreating ? (
         <span className="inline-flex items-center gap-x-2">
-          Creating...
+          {t("Creating...")}
           <LucideLoader className="h-4 w-4 animate-spin" />
         </span>
       ) : children}

@@ -1,5 +1,6 @@
 "use client";
 
+import { t } from "@/lib/i18n";
 import { use, useMemo } from "react";
 import { DocumentTitle, formatRepoBranchTitle } from "@/components/document-title";
 import { useConfig } from "@/contexts/config-context";
@@ -30,7 +31,7 @@ export default function Page({
   return (
     <>
       <DocumentTitle
-        title={formatRepoBranchTitle(`Edit ${filename} | ${schema.label || schema.name}`, config.owner, config.repo, config.branch)}
+        title={formatRepoBranchTitle(`${t("Edit {name}", { name: filename })} | ${schema.label || schema.name}`, config.owner, config.repo, config.branch)}
       />
       <Entry name={schemaName} path={decodedPath}/>
     </>

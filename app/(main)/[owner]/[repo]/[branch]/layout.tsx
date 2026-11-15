@@ -1,3 +1,4 @@
+import { t } from "@/lib/i18n";
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { getConfig } from "@/lib/config-store";
@@ -63,12 +64,12 @@ export default async function Layout({
         errorMessage = (
           <Empty className="absolute inset-0 border-0 rounded-none">
             <EmptyHeader>
-              <EmptyTitle>Branch not found</EmptyTitle>
-              <EmptyDescription>{`The branch "${decodedBranch}" could not be found. It may have been removed or renamed.`}</EmptyDescription>
+              <EmptyTitle>{t("Branch not found")}</EmptyTitle>
+              <EmptyDescription>{t("The branch \"{branch}\" could not be found. It may have been removed or renamed.", { branch: decodedBranch })}</EmptyDescription>
             </EmptyHeader>
             <EmptyContent>
               <Link className={buttonVariants({ variant: "default" })} href={`/${owner}/${repo}`}>
-                Open default branch
+                {t("Open default branch")}
               </Link>
             </EmptyContent>
           </Empty>
@@ -78,12 +79,12 @@ export default async function Layout({
       errorMessage = (
         <Empty className="absolute inset-0 border-0 rounded-none">
           <EmptyHeader>
-            <EmptyTitle>Access denied</EmptyTitle>
-            <EmptyDescription>You do not have permission to access this repository.</EmptyDescription>
+            <EmptyTitle>{t("Access denied")}</EmptyTitle>
+            <EmptyDescription>{t("You do not have permission to access this repository.")}</EmptyDescription>
           </EmptyHeader>
           <EmptyContent>
             <Link className={buttonVariants({ variant: "default" })} href="/">
-              Choose another repository
+              {t("Choose another repository")}
             </Link>
           </EmptyContent>
         </Empty>

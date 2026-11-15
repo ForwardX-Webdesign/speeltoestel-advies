@@ -1,5 +1,6 @@
 "use client";
 
+import { t } from "@/lib/i18n";
 import { useMemo, useState } from "react";
 import { useConfig } from "@/contexts/config-context";
 import { getRelativePath, joinPathSegments, normalizePath } from "@/lib/utils/file";
@@ -64,7 +65,7 @@ export function FileRename({
               newPath,
             }),
           });
-          const data = await requireApiSuccess<any>(response, "Failed to rename file");
+          const data = await requireApiSuccess<any>(response, t(t("Failed to rename file")));
 
           resolve(data);
         } catch (error) {
@@ -73,7 +74,7 @@ export function FileRename({
       });
 
       toast.promise(renamePromise, {
-        loading: `Renaming "${path}" to "${newPath}"`,
+        loading: t("Renaming \"{path}\" to \"{newPath}\"", { path, newPath }),
         success: (data: any) => {
           if (onRename) onRename(path, newPath);
           return data.message;
@@ -89,7 +90,7 @@ export function FileRename({
     <Dialog open={isOpen} onOpenChange={onOpenChange}>      
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Rename file</DialogTitle>
+          <DialogTitle>{t("Rename file")}</DialogTitle>
           <DialogDescription></DialogDescription>
         </DialogHeader>
         <Input
@@ -98,10 +99,10 @@ export function FileRename({
         />
         <DialogFooter className="max-sm:gap-y-2">
           <DialogClose asChild>
-            <Button type="button" variant="outline">Cancel</Button>
+            <Button type="button" variant="outline">{t("Cancel")}</Button>
           </DialogClose>
           <DialogClose asChild>
-            <Button type="submit" onClick={handleRename}>Rename</Button>
+            <Button type="submit" onClick={handleRename}>{t("Rename")}</Button>
           </DialogClose>
         </DialogFooter>
       </DialogContent>

@@ -1,5 +1,6 @@
 "use client";
 
+import { t } from "@/lib/i18n";
 import { useMemo, Fragment, useState } from "react";
 import { FileRename } from "@/components/file/file-rename";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
@@ -54,7 +55,7 @@ export function FilePath({
             </Button>
           </TooltipTrigger>
           <TooltipContent>
-            Rename
+            {t("Rename")}
           </TooltipContent>
         </Tooltip>
       </div>

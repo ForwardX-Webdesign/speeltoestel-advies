@@ -1,3 +1,4 @@
+import { t } from "@/lib/i18n";
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { getToken } from "@/lib/token";
@@ -40,12 +41,12 @@ export default async function Layout({
       return(
         <Empty className="absolute inset-0 border-0 rounded-none">
           <EmptyHeader>
-            <EmptyTitle>Empty repository</EmptyTitle>
-            <EmptyDescription>Create a branch and add a &quot;.pages.yml&quot; file to configure this repository.</EmptyDescription>
+            <EmptyTitle>{t("Empty repository")}</EmptyTitle>
+            <EmptyDescription>{t("Create a branch and add a \".pages.yml\" file to configure this repository.")}</EmptyDescription>
           </EmptyHeader>
           <EmptyContent>
             <Link className={buttonVariants({ variant: "default" })} href="/">
-              Choose another repository
+              {t("Choose another repository")}
             </Link>
           </EmptyContent>
         </Empty>
@@ -69,12 +70,12 @@ export default async function Layout({
         return(
           <Empty className="absolute inset-0 border-0 rounded-none">
             <EmptyHeader>
-              <EmptyTitle>Repository not found</EmptyTitle>
-              <EmptyDescription>It may have been removed, renamed, or the URL may be incorrect.</EmptyDescription>
+              <EmptyTitle>{t("Repository not found")}</EmptyTitle>
+              <EmptyDescription>{t("It may have been removed, renamed, or the URL may be incorrect.")}</EmptyDescription>
             </EmptyHeader>
             <EmptyContent>
               <Link className={buttonVariants({ variant: "default" })} href="/">
-                Choose another repository
+                {t("Choose another repository")}
               </Link>
             </EmptyContent>
           </Empty>
@@ -83,12 +84,12 @@ export default async function Layout({
         return(
           <Empty className="absolute inset-0 border-0 rounded-none">
             <EmptyHeader>
-              <EmptyTitle>Access denied</EmptyTitle>
-              <EmptyDescription>You do not have permission to access this repository.</EmptyDescription>
+              <EmptyTitle>{t("Access denied")}</EmptyTitle>
+              <EmptyDescription>{t("You do not have permission to access this repository.")}</EmptyDescription>
             </EmptyHeader>
             <EmptyContent>
               <Link className={buttonVariants({ variant: "default" })} href="/">
-                Choose another repository
+                {t("Choose another repository")}
               </Link>
             </EmptyContent>
           </Empty>
