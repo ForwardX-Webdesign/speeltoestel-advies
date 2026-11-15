@@ -29,6 +29,9 @@ import { EntryHistoryDropdown } from "./entry-history";
 import { EntryPreview } from "./entry-preview";
 import { resolvePreviewUrl } from "@/lib/preview";
 import { useRepo } from "@/contexts/repo-context";
+import { useUser } from "@/contexts/user-context";
+import { hasGithubIdentity } from "@/lib/authz-shared";
+import { t } from "@/lib/i18n";
 import { EmptyCreate } from "@/components/empty-create";
 import { FileOptions } from "@/components/file/file-options";
 import { RepoActionButtons } from "@/components/repo/repo-action-buttons";
@@ -113,6 +116,7 @@ export function Entry({
   const [hasRegisteredChanges, setHasRegisteredChanges] = useState(false);
   const [error, setError] = useState<string | undefined | null>(null);
   const changeVersionRef = useRef(0);
+  const previewUrlRef = useRef<string | null>(null);
   const { mutate } = useSWRConfig();
 
   const router = useRouter();
@@ -120,6 +124,9 @@ export function Entry({
   const { config } = useConfig();
   if (!config) throw new Error(`Configuration not found.`);
   const { defaultBranch } = useRepo();
+  const { user } = useUser();
+  // Clients sign in by email and have no GitHub account: keep GitHub out of their way.
+  const isClientView = !hasGithubIdentity(user);
   
   const schema = useMemo(() => {
     if (!name) return;
@@ -406,7 +413,18 @@ export function Entry({
       loading: "Saving your file",
       success: (response: ApiSuccess<EntryData>) => {
         if (onSave) onSave(response.data);
-        return response.message;
+        const savedPreviewUrl = previewUrlRef.current;
+        if (!savedPreviewUrl) return { message: response.message };
+        return {
+          message: response.message,
+          description: t("Your change is usually live within a few minutes."),
+          action: {
+            label: t("View page"),
+            onClick: () => {
+              window.open(savedPreviewUrl, "_blank", "noopener,noreferrer");
+            },
+          },
+        };
       },
       error: (error: unknown) => error instanceof Error ? error.message : "Failed to save file.",
     });
@@ -680,6 +698,10 @@ export function Entry({
     );
   }, [config.branch, config.object, config.owner, config.repo, defaultBranch, entry, path, schema]);
 
+  useEffect(() => {
+    previewUrlRef.current = previewUrl;
+  }, [previewUrl]);
+
   const headerNode = useMemo(() => (
     <div className="flex min-w-0 items-center gap-2">
       <div className="flex min-w-0 flex-1 items-center gap-2 overflow-hidden">
@@ -707,6 +729,7 @@ export function Entry({
                   path={path}
                   triggerVariant="outline"
                   triggerSize="icon"
+                  showGithubLinks={!isClientView}
                 />
               )
               : <Button variant="outline" size="icon" className="shrink-0" disabled><History /></Button>
@@ -762,7 +785,7 @@ export function Entry({
         </div>
       )}
     </div>
-  ), [breadcrumbNode, canDelete, canRename, filenameChanged, filenameFieldMode, filenameValue, handleDelete, handleRename, hasRegisteredChanges, headerActionsNode, headerMeta, historyData, isBusy, isFilenameUnlocked, isFormDirty, isLoading, name, path, previewUrl, schemaType, sha, showFilenameField, showHeaderActions]);
+  ), [breadcrumbNode, canDelete, canRename, filenameChanged, filenameFieldMode, filenameValue, handleDelete, handleRename, hasRegisteredChanges, headerActionsNode, headerMeta, historyData, isBusy, isClientView, isFilenameUnlocked, isFormDirty, isLoading, name, path, previewUrl, schemaType, sha, showFilenameField, showHeaderActions]);
 
   useRepoHeader({ header: headerNode });
 

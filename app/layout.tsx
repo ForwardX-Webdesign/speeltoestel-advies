@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { Inter, JetBrains_Mono, Poppins } from "next/font/google";
 import { getBaseUrl } from "@/lib/base-url";
 import { cn } from "@/lib/utils";
+import { locale } from "@/lib/i18n";
 import "./globals.css";
 
 const inter = Inter({
@@ -63,7 +64,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {  
 	return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang={locale} suppressHydrationWarning>
       <body
         className={cn(
           "min-h-screen bg-background font-sans antialiased",

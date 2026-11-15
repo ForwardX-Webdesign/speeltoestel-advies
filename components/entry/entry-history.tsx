@@ -89,11 +89,13 @@ export function EntryHistoryDropdown({
   history,
   triggerVariant = "ghost",
   triggerSize = "icon",
+  showGithubLinks = true,
 }: {
   path: string;
   history: EntryHistoryItem[];
   triggerVariant?: React.ComponentProps<typeof Button>["variant"];
   triggerSize?: React.ComponentProps<typeof Button>["size"];
+  showGithubLinks?: boolean;
 }) {
   const { config } = useConfig();
 
@@ -108,14 +110,20 @@ export function EntryHistoryDropdown({
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="max-w-3xs">
         {history.slice(0, 3).map((item) => (
-          <DropdownMenuItem key={item.sha} asChild>
-            <a href={item.html_url} target="_blank" rel="noopener noreferrer" className="w-full truncate flex items-center gap-3">
+          showGithubLinks ? (
+            <DropdownMenuItem key={item.sha} asChild>
+              <a href={item.html_url} target="_blank" rel="noopener noreferrer" className="w-full truncate flex items-center gap-3">
+                <HistoryItemContent item={item} compact />
+              </a>
+            </DropdownMenuItem>
+          ) : (
+            <div key={item.sha} className="flex w-full items-center gap-3 truncate px-2 py-1.5 text-sm">
               <HistoryItemContent item={item} compact />
-            </a>
-          </DropdownMenuItem>
+            </div>
+          )
         ))}
-        <DropdownMenuSeparator/>
-        <DropdownMenuItem asChild>
+        {showGithubLinks && <DropdownMenuSeparator/>}
+        {showGithubLinks && <DropdownMenuItem asChild>
           <a
             href={`https://github.com/${config?.owner}/${config?.repo}/commits/${encodeURIComponent(config!.branch)}/${path}`}
             target="_blank"
@@ -125,7 +133,7 @@ export function EntryHistoryDropdown({
             View on GitHub
             <ArrowUpRight className="size-3 text-muted-foreground ml-auto" />
           </a>
-        </DropdownMenuItem>
+        </DropdownMenuItem>}
       </DropdownMenuContent>
     </DropdownMenu>
   );

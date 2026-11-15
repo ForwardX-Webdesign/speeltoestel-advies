@@ -1,0 +1,185 @@
+# ForwardX CMS: startconfiguratie voor kapsalonsites.
+#
+# Kopieer dit bestand als `.pages.yml` naar de root van de klantrepository en
+# pas de URL's bij `preview` aan. De velden sluiten aan op de databestanden in
+# `src/_data/` van een standaard ForwardX-kapsalonsite (Eleventy).
+#
+# De prijslijst (`prijzen.json`) staat er bewust niet in: die wordt automatisch
+# gesynchroniseerd met het boekingssysteem.
+
+preview:
+  # Netlify branch-deploy. Vervang "salonnaam" door de Netlify-sitenaam.
+  url: https://{branch}--salonnaam.netlify.app
+  # De live site, gebruikt voor de standaardbranch.
+  production: https://www.salonnaam.nl
+  mode: tab
+
+settings:
+  content:
+    # Bewaart velden van losse bestanden die hieronder niet genoemd zijn
+    # (boekingssysteem, schema, enz.). Geldt niet voor lijsten: neem daar elk
+    # veld op, desnoods met `hidden: true`.
+    merge: true
+
+media:
+  input: src/assets/images
+  output: /assets/images
+  extensions: [jpg, jpeg, png, webp, avif, svg]
+
+content:
+  - name: salon
+    label: Openingstijden en contact
+    description: Je adres, telefoonnummer en openingstijden. Deze staan op meerdere plekken op je website.
+    type: file
+    path: src/_data/site.json
+    preview: /contact/
+    fields:
+      - name: name
+        label: Naam van de salon
+        type: string
+        required: true
+      - name: openingstijden
+        label: Openingstijden
+        description: 'Vul per dag de tijden in, bijvoorbeeld "09:00 – 18:00", of "Gesloten".'
+        type: object
+        fields:
+          - { name: maandag, label: Maandag, type: string }
+          - { name: dinsdag, label: Dinsdag, type: string }
+          - { name: woensdag, label: Woensdag, type: string }
+          - { name: donderdag, label: Donderdag, type: string }
+          - { name: vrijdag, label: Vrijdag, type: string }
+          - { name: zaterdag, label: Zaterdag, type: string }
+          - { name: zondag, label: Zondag, type: string }
+      - name: instagram
+        label: Instagram
+        type: object
+        fields:
+          - { name: handle, label: Gebruikersnaam, type: string }
+          - { name: url, label: Link naar je profiel, type: string }
+
+  - name: behandelingen
+    label: Behandelingen
+    description: De behandelingen op je website. De prijslijst zelf komt automatisch uit je boekingssysteem.
+    type: file
+    path: src/_data/behandelingen.json
+    preview: /behandelingen/
+    list: true
+    fields:
+      - name: naam
+        label: Naam
+        type: string
+        required: true
+      - name: slug
+        label: Webadres
+        description: Alleen kleine letters en streepjes, bijvoorbeeld "balayage". Liever niet wijzigen als de behandeling al online staat.
+        type: string
+        required: true
+        pattern:
+          regex: '^[a-z0-9]+(-[a-z0-9]+)*$'
+          message: Gebruik alleen kleine letters, cijfers en streepjes.
+      - name: categorie
+        label: Categorie
+        type: string
+      - name: vanafPrijs
+        label: Vanafprijs
+        description: 'Bijvoorbeeld "€ 95".'
+        type: string
+      - name: duur
+        label: Duur
+        description: 'Bijvoorbeeld "2 uur".'
+        type: string
+      - name: kortBeschrijving
+        label: Korte omschrijving
+        description: Eén zin die op de kaart van de behandeling staat.
+        type: text
+      - name: klantFoto
+        label: Eigen foto
+        description: Laat leeg om de standaardfoto te gebruiken.
+        type: image
+      # Verborgen: de standaardfoto uit de ForwardX-bibliotheek blijft zo bewaard.
+      - name: defaultFoto
+        type: string
+        hidden: true
+      - name: heeftDetailpagina
+        label: Eigen pagina voor deze behandeling
+        type: boolean
+      - name: werkwijze
+        label: Zo werken wij
+        description: Uitleg over jullie aanpak. Staat op de pagina van de behandeling.
+        type: text
+
+  - name: team
+    label: Team
+    description: De mensen die op de teampagina staan.
+    type: file
+    path: src/_data/team.json
+    preview: /team/
+    list: true
+    fields:
+      - name: naam
+        label: Naam
+        type: string
+        required: true
+      - name: functie
+        label: Functie
+        description: 'Bijvoorbeeld "Senior stylist, gespecialiseerd in balayage".'
+        type: string
+      - name: foto
+        label: Foto
+        type: image
+      - name: bio
+        label: Over deze collega
+        description: Twee of drie zinnen.
+        type: text
+      # Verborgen: koppeling met vestigingen bij salons met meerdere locaties.
+      - name: vestigingen
+        type: string
+        list: true
+        hidden: true
+
+  - name: vacatures
+    label: Vacatures
+    description: Openstaande vacatures. Zonder vacatures toont de website alleen het blok voor open sollicitaties.
+    type: file
+    path: src/_data/vacatures.json
+    preview: /vacatures/
+    list: true
+    fields:
+      - name: titel
+        label: Functie
+        type: string
+        required: true
+      - name: uren
+        label: Uren per week
+        type: string
+      - name: salaris
+        label: Salaris
+        description: 'Een indicatie, of "marktconform".'
+        type: string
+      - name: beschrijving
+        label: Omschrijving
+        type: text
+
+  - name: pakketten
+    label: Pakketten
+    description: Combinaties van behandelingen voor een vaste prijs.
+    type: file
+    path: src/_data/pakketten.json
+    preview: /behandelingen/
+    list: true
+    fields:
+      - name: naam
+        label: Naam
+        type: string
+        required: true
+      - name: ondertitel
+        label: Ondertitel
+        type: string
+      - name: prijs
+        label: Prijs
+        description: 'Bijvoorbeeld "€ 549".'
+        type: string
+      - name: items
+        label: Wat zit erin
+        type: string
+        list: true

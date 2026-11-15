@@ -50,6 +50,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
+import { t } from "@/lib/i18n";
 import {
   Dialog,
   DialogContent,
@@ -92,6 +93,9 @@ function RepoSwitcher() {
   const router = useRouter();
   const { owner, repo, branches = [] } = useRepo();
   const { config } = useConfig();
+  const { user } = useUser();
+  // Clients sign in by email and have no GitHub account: hide GitHub and branches.
+  const isClientView = !hasGithubIdentity(user);
   const currentBranch = config?.branch ?? "";
   const sortedBranches = useMemo(
     () => [...branches].sort((a, b) => a.localeCompare(b)),
@@ -174,7 +178,7 @@ function RepoSwitcher() {
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">{repo}</span>
                 <span className="truncate text-xs text-muted-foreground">
-                  {currentBranch || owner}
+                  {isClientView ? t("Website") : currentBranch || owner}
                 </span>
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
@@ -189,6 +193,7 @@ function RepoSwitcher() {
                 : undefined
             }
           >
+            {!isClientView && (<>
             <DropdownMenuItem asChild>
               <a
                 href={`https://github.com/${owner}/${repo}`}
@@ -217,9 +222,10 @@ function RepoSwitcher() {
             <DialogTrigger asChild>
               <DropdownMenuItem>Manage branches</DropdownMenuItem>
             </DialogTrigger>
+            </>)}
             {recentRepos.length > 0 && (
               <>
-                <DropdownMenuSeparator />
+                {!isClientView && <DropdownMenuSeparator />}
                 <DropdownMenuLabel className="text-xs text-muted-foreground">
                   Recently visited
                 </DropdownMenuLabel>

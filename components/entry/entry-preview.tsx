@@ -2,6 +2,7 @@
 
 import { useCallback, useState } from "react";
 import { getPreviewSettings } from "@/lib/preview";
+import { t } from "@/lib/i18n";
 import { useConfig } from "@/contexts/config-context";
 import { Button } from "@/components/ui/button";
 import { ButtonGroup } from "@/components/ui/button-group";
@@ -53,9 +54,9 @@ export function EntryPreview({
   const copyLink = useCallback(async () => {
     try {
       await navigator.clipboard.writeText(url);
-      toast.success("Preview link copied.");
+      toast.success(t("Preview link copied."));
     } catch {
-      toast.error("Could not copy the preview link.");
+      toast.error(t("Could not copy the preview link."));
     }
   }, [url]);
 
@@ -68,15 +69,15 @@ export function EntryPreview({
               type="button"
               variant="outline"
               onClick={mode === "panel" ? openPanel : openTab}
-              aria-label="Preview"
+              aria-label={t("Preview")}
             >
               <Eye className="size-4" />
-              <span className="hidden md:inline">Preview</span>
+              <span className="hidden md:inline">{t("Preview")}</span>
             </Button>
           </TooltipTrigger>
           <TooltipContent className="max-w-xs break-all">
             {hasUnsavedChanges
-              ? "Save first: the preview shows the last saved version."
+              ? t("Save first: the preview shows the last saved version.")
               : url}
           </TooltipContent>
         </Tooltip>
@@ -86,7 +87,7 @@ export function EntryPreview({
               type="button"
               variant="outline"
               size="icon"
-              aria-label="Preview options"
+              aria-label={t("Preview options")}
             >
               <ChevronDown />
             </Button>
@@ -94,15 +95,15 @@ export function EntryPreview({
           <DropdownMenuContent align="end">
             <DropdownMenuItem onSelect={openTab}>
               <ArrowUpRight />
-              Open in new tab
+              {t("Open in new tab")}
             </DropdownMenuItem>
             <DropdownMenuItem onSelect={openPanel}>
               <PanelRight />
-              Open in side panel
+              {t("Open in side panel")}
             </DropdownMenuItem>
             <DropdownMenuItem onSelect={copyLink}>
               <Copy />
-              Copy preview link
+              {t("Copy preview link")}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -116,7 +117,7 @@ export function EntryPreview({
         >
           <SheetHeader className="flex-row items-center gap-2 border-b p-3">
             <div className="min-w-0 flex-1">
-              <SheetTitle className="text-sm">Preview</SheetTitle>
+              <SheetTitle className="text-sm">{t("Preview")}</SheetTitle>
               <SheetDescription className="truncate text-xs">
                 {url}
               </SheetDescription>
@@ -126,7 +127,7 @@ export function EntryPreview({
               variant="outline"
               size="icon"
               onClick={() => setFrameKey((key) => key + 1)}
-              aria-label="Reload preview"
+              aria-label={t("Reload preview")}
             >
               <RotateCw />
             </Button>
@@ -135,7 +136,7 @@ export function EntryPreview({
               variant="outline"
               size="icon"
               onClick={copyLink}
-              aria-label="Copy preview link"
+              aria-label={t("Copy preview link")}
             >
               <Copy />
             </Button>
@@ -144,7 +145,7 @@ export function EntryPreview({
               variant="outline"
               size="icon"
               onClick={openTab}
-              aria-label="Open in new tab"
+              aria-label={t("Open in new tab")}
             >
               <ArrowUpRight />
             </Button>
@@ -153,19 +154,18 @@ export function EntryPreview({
               variant="outline"
               onClick={() => setIsPanelOpen(false)}
             >
-              Close
+              {t("Close")}
             </Button>
           </SheetHeader>
           {hasUnsavedChanges && (
             <p className="border-b bg-muted px-3 py-2 text-xs text-muted-foreground">
-              You have unsaved changes. The preview shows the last saved
-              version, once the site has finished deploying.
+              {t("You have unsaved changes. The preview shows the last saved version, once the site has finished deploying.")}
             </p>
           )}
           <iframe
             key={frameKey}
             src={url}
-            title="Preview"
+            title={t("Preview")}
             className="min-h-0 w-full flex-1 bg-white"
             referrerPolicy="no-referrer"
           />
