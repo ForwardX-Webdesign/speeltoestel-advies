@@ -12,6 +12,7 @@ import {
   EmptyHeader,
   EmptyTitle,
 } from "@/components/ui/empty";
+import { t } from "@/lib/i18n";
 
 export default function Error({
   error,
@@ -31,7 +32,7 @@ export default function Error({
   return (
     <Empty className="absolute inset-0 border-0 rounded-none">
       <EmptyHeader>
-        <EmptyTitle>Something went wrong</EmptyTitle>
+        <EmptyTitle>{t("Something went wrong")}</EmptyTitle>
         <EmptyDescription>{error.message}</EmptyDescription>
       </EmptyHeader>
       <EmptyContent className="flex-row justify-center gap-2">
@@ -39,13 +40,13 @@ export default function Error({
           className={buttonVariants({ variant: "default" })}
           href="/"
         >
-          Go home
+          {t("Go home")}
         </Link>
         <button
           className={buttonVariants({ variant: "outline" })}
           onClick={reset}
         >
-          Try again
+          {t("Try again")}
         </button>
       </EmptyContent>
     </Empty>

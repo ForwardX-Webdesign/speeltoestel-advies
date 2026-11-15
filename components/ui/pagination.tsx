@@ -1,5 +1,6 @@
 "use client";
 
+import { t } from "@/lib/i18n";
 import * as React from "react";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react";
@@ -12,7 +13,7 @@ function Pagination({ className, ...props }: React.ComponentProps<"nav">) {
   return (
     <nav
       role="navigation"
-      aria-label="pagination"
+      aria-label={t("pagination")}
       className={cn("mx-auto flex w-full justify-center", className)}
       {...props}
     />
@@ -65,13 +66,13 @@ function PaginationPrevious({
 }: React.ComponentProps<typeof PaginationLink> & { iconOnly?: boolean }) {
   return (
     <PaginationLink
-      aria-label="Go to previous page"
+      aria-label={t("Go to previous page")}
       size={iconOnly ? "icon-sm" : "default"}
       className={cn(iconOnly ? "size-8" : "gap-1 px-2.5 sm:pl-2.5", className)}
       {...props}
     >
       <ChevronLeft className="h-4 w-4" />
-      {iconOnly ? <span className="sr-only">Previous</span> : <span className="hidden sm:block">Previous</span>}
+      {iconOnly ? <span className="sr-only">{t("Previous")}</span> : <span className="hidden sm:block">{t("Previous")}</span>}
     </PaginationLink>
   );
 }
@@ -83,12 +84,12 @@ function PaginationNext({
 }: React.ComponentProps<typeof PaginationLink> & { iconOnly?: boolean }) {
   return (
     <PaginationLink
-      aria-label="Go to next page"
+      aria-label={t("Go to next page")}
       size={iconOnly ? "icon-sm" : "default"}
       className={cn(iconOnly ? "size-8" : "gap-1 px-2.5 sm:pr-2.5", className)}
       {...props}
     >
-      {iconOnly ? <span className="sr-only">Next</span> : <span className="hidden sm:block">Next</span>}
+      {iconOnly ? <span className="sr-only">{t("Next")}</span> : <span className="hidden sm:block">{t("Next")}</span>}
       <ChevronRight className="h-4 w-4" />
     </PaginationLink>
   );
@@ -105,7 +106,7 @@ function PaginationEllipsis({
       {...props}
     >
       <MoreHorizontal className="h-4 w-4" />
-      <span className="sr-only">More pages</span>
+      <span className="sr-only">{t("More pages")}</span>
     </span>
   );
 }

@@ -1,4 +1,5 @@
 "use client";
+import { t } from "@/lib/i18n";
 import { Badge } from "@/components/ui/badge";
 
 const ViewComponent = ({ value }: { value: boolean}) => {
@@ -11,8 +12,8 @@ const ViewComponent = ({ value }: { value: boolean}) => {
   return (
     <span className="flex items-center gap-x-1.5">
       {firstValue
-        ? <Badge variant="secondary">True</Badge>
-        : <Badge variant="secondary" className="text-muted-foreground">False</Badge>
+        ? <Badge variant="secondary">{t("True")}</Badge>
+        : <Badge variant="secondary" className="text-muted-foreground">{t("False")}</Badge>
       }
       {extraValuesCount > 0 && (
         <span className="text-muted-foreground text-xs">

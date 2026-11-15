@@ -14,6 +14,7 @@ import {
   Tailwind,
 } from "@react-email/components";
 import { emailTheme } from "@/components/email/theme";
+import { t } from "@/lib/i18n";
 
 export const InviteEmailTemplate = ({
   email,
@@ -38,7 +39,7 @@ export const InviteEmailTemplate = ({
     <Html>
       <Head />
       <Preview>
-        {invitedByName} invited you to &quot;{repoName}&quot;
+        {t('{name} invited you to "{repo}"', { name: invitedByName, repo: repoName })}
       </Preview>
       <Tailwind>
         <Body
@@ -62,7 +63,7 @@ export const InviteEmailTemplate = ({
               className="text-[24px] font-semibold p-0 my-[30px] mx-0 text-center tracking-tight"
               style={{ color: emailTheme.foreground }}
             >
-              Join &quot;{repoName}&quot; on ForwardX CMS
+              {t('Join "{repo}" on ForwardX CMS', { repo: repoName })}
             </Heading>
             <Text
               className="text-[16px] leading-[24px]"
@@ -75,8 +76,7 @@ export const InviteEmailTemplate = ({
               >
                 {invitedByName}
               </Link>{" "}
-              has invited you to the &quot;{repoName}&quot; project on Pages
-              CMS. Use the following link to start collaborating:
+              {t('has invited you to the "{repo}" project on ForwardX CMS. Use the following link to start collaborating:', { repo: repoName })}
             </Text>
             <Section className="text-center mt-[24px] mb-[24px]">
               <Button
@@ -88,14 +88,14 @@ export const InviteEmailTemplate = ({
                   color: emailTheme.buttonForeground,
                 }}
               >
-                Join &quot;{repoName}&quot;
+                {t('Join "{repo}"', { repo: repoName })}
               </Button>
             </Section>
             <Text
               className="text-[16px] leading-[24px]"
               style={{ color: emailTheme.foreground }}
             >
-              or copy and paste this URL into your browser:{" "}
+              {t("or copy and paste this URL into your browser:")}{" "}
             </Text>
             <Text
               className="text-[16px] leading-[24px]"
@@ -113,7 +113,7 @@ export const InviteEmailTemplate = ({
               className="text-[14px] leading-[24px] mt-[36px]"
               style={{ color: emailTheme.mutedForeground }}
             >
-              This email was intended for{" "}
+              {t("This email was intended for")}{" "}
               <Link
                 href={`mailto:${email}`}
                 className="underline"
@@ -121,8 +121,8 @@ export const InviteEmailTemplate = ({
               >
                 {email}
               </Link>
-              . If you think this is a mistake, you can safely ignore this
-              email.
+              .{" "}
+              {t("If you think this is a mistake, you can safely ignore this email.")}
             </Text>
           </Container>
         </Body>

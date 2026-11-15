@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/card";
 import { ArrowLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { t } from "@/lib/i18n";
 
 export default async function Page() {
   const session = await auth.api.getSession({
@@ -39,7 +40,7 @@ export default async function Page() {
 
   return (
     <MainRootLayout>
-      <DocumentTitle title="Settings" />
+      <DocumentTitle title={t("Settings")} />
       <div className="max-w-screen-sm mx-auto p-4 md:p-6 space-y-6">
         <Link
           className={cn(
@@ -49,11 +50,11 @@ export default async function Page() {
           href="/"
         >
           <ArrowLeft />
-          Go home
+          {t("Go home")}
         </Link>
         <header className="flex items-center mb-6">
           <h1 className="font-semibold tracking-tight text-lg md:text-2xl">
-            Settings
+            {t("Settings")}
           </h1>
         </header>
         <div className="flex flex-col relative flex-1 space-y-6">
@@ -65,9 +66,9 @@ export default async function Page() {
 
           <Card>
             <CardHeader>
-              <CardTitle>Authentication</CardTitle>
+              <CardTitle>{t("Authentication")}</CardTitle>
               <CardDescription>
-                Your sign-in methods and linked identity providers.
+                {t("Your sign-in methods and linked identity providers.")}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -84,10 +85,10 @@ export default async function Page() {
             <Card>
               <CardHeader>
                 <CardTitle className="text-base md:text-lg">
-                  Installations
+                  {t("Installations")}
                 </CardTitle>
                 <CardDescription>
-                  Manage the accounts the Github application is installed on.
+                  {t("Manage the accounts the Github application is installed on.")}
                 </CardDescription>
               </CardHeader>
               <CardContent>

@@ -1,3 +1,4 @@
+import { t } from "@/lib/i18n";
 import { z } from "zod";
 import { Field } from "@/types/field";
 import { EditComponent } from "./edit-component";
@@ -50,19 +51,19 @@ const schema = (field: Field) => {
     .refine(val => {
       if (!val) return !field.required;
       return isValid(parse(val, inputFormat, new Date()));
-    }, "Invalid date")
+    }, t("Invalid date"))
     .refine(val => {
       if (!val || !field.options?.min) return true;
       const date = parse(val, inputFormat, new Date());
       const minDate = parse(field.options.min as string, inputFormat, new Date());
       return isValid(minDate) && !isBefore(date, minDate);
-    }, `Date must be after ${field.options?.min}`)
+    }, t("Date must be after {date}", { date: field.options?.min as string }))
     .refine(val => {
       if (!val || !field.options?.max) return true;
       const date = parse(val, inputFormat, new Date());
       const maxDate = parse(field.options.max as string, inputFormat, new Date());
       return isValid(maxDate) && !isAfter(date, maxDate);
-    }, `Date must be before ${field.options?.max}`);
+    }, t("Date must be before {date}", { date: field.options?.max as string }));
   
   return zodSchema;
 };

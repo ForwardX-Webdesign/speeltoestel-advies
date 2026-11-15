@@ -1,5 +1,6 @@
 "use client";
 
+import { t } from "@/lib/i18n";
 import {
   forwardRef,
   useCallback,
@@ -766,9 +767,10 @@ const EditComponent = forwardRef(
           !allowedExtensions.includes(extension)
         ) {
           throw new Error(
-            `Invalid file extension ".${extension}". Allowed: ${allowedExtensions
-              .map((item) => `.${item}`)
-              .join(", ")}`,
+            t("Invalid file extension '.{extension}'. Allowed: {allowed}", {
+              extension,
+              allowed: allowedExtensions.map((item) => `.${item}`).join(", "),
+            }),
           );
         }
 
@@ -776,7 +778,7 @@ const EditComponent = forwardRef(
           const reader = new FileReader();
           reader.onload = () => resolve(String(reader.result ?? ""));
           reader.onerror = () =>
-            reject(new Error("Failed to read image file."));
+            reject(new Error(t("Failed to read image file.")));
           reader.readAsDataURL(file);
         });
         const content = dataUrl.replace(/^(.+,)/, "");
@@ -803,7 +805,7 @@ const EditComponent = forwardRef(
         );
         if (!response.ok) {
           throw new Error(
-            `Failed to upload file: ${response.status} ${response.statusText}`,
+            t("Failed to upload file: {status} {statusText}", { status: response.status, statusText: response.statusText }),
           );
         }
 
@@ -850,7 +852,7 @@ const EditComponent = forwardRef(
           disabled={isReadonly || isTransforming || pendingUploads > 0}
           data-active={mode === "editor" ? "true" : undefined}
         >
-          Editor
+          {t("Editor")}
         </button>
         <button
           type="button"
@@ -864,7 +866,7 @@ const EditComponent = forwardRef(
           disabled={isReadonly || isTransforming || pendingUploads > 0}
           data-active={mode === "source" ? "true" : undefined}
         >
-          Source
+          {t("Source")}
         </button>
       </div>
     );

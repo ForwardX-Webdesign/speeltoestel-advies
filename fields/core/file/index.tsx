@@ -1,3 +1,4 @@
+import { t } from "@/lib/i18n";
 import { z, ZodIssueCode } from "zod";
 import { ViewComponent } from "./view-component";
 import { EditComponent } from "./edit-component";
@@ -100,13 +101,13 @@ const schema = (field: Field, configObject?: Record<string, any>) => {
     if (field.required && isEmpty) {
       ctx.addIssue({
         code: ZodIssueCode.custom,
-        message: "This field is required",
+        message: t("This field is required"),
       });
       return;
     }
 
     if (isMultiple && hasEmptyElementInArray) {
-      ctx.addIssue({ code: ZodIssueCode.custom, message: "File path cannot be empty within the list." });
+      ctx.addIssue({ code: ZodIssueCode.custom, message: t("File path cannot be empty within the list.") });
     }
 
     if (enforceUnique && Array.isArray(data)) {
@@ -116,7 +117,7 @@ const schema = (field: Field, configObject?: Record<string, any>) => {
       if (new Set(normalizedPaths).size !== normalizedPaths.length) {
         ctx.addIssue({
           code: ZodIssueCode.custom,
-          message: "File paths must be unique.",
+          message: t("File paths must be unique."),
         });
         return;
       }
@@ -130,7 +131,7 @@ const schema = (field: Field, configObject?: Record<string, any>) => {
 
       // Path Prefix Check
       if (mediaInputPath && !path.startsWith(mediaInputPath)) {
-        ctx.addIssue({ code: ZodIssueCode.custom, message: `Path must start with the media directory: ${mediaInputPath}` });
+        ctx.addIssue({ code: ZodIssueCode.custom, message: t("Path must start with the media directory: {path}", { path: mediaInputPath }) });
       }
 
       // Extension Check
@@ -139,7 +140,7 @@ const schema = (field: Field, configObject?: Record<string, any>) => {
         if (!allowedExtensions.includes(fileExtension)) {
           ctx.addIssue({
             code: ZodIssueCode.custom,
-            message: `Invalid file extension '.${fileExtension}'. Allowed: ${allowedExtensions.map((e: string) => `.${e}`).join(', ')}`
+            message: t("Invalid file extension '.{extension}'. Allowed: {allowed}", { extension: fileExtension, allowed: allowedExtensions.map((e: string) => `.${e}`).join(', ') })
           });
         }
       }

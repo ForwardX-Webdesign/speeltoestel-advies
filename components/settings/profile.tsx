@@ -21,6 +21,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Loader } from "lucide-react";
+import { t } from "@/lib/i18n";
 
 type ProfileProps = {
   name?: string | null;
@@ -50,13 +51,13 @@ export function Profile({ name, email, githubUsername }: ProfileProps) {
       });
       const payload = await response.json().catch(() => null);
       if (!response.ok || !payload?.status) {
-        throw new Error(payload?.message || "Failed to update profile.");
+        throw new Error(payload?.message || t("Failed to update profile."));
       }
 
-      toast.success("Profile updated.");
+      toast.success(t("Profile updated."));
       router.refresh();
     } catch (error) {
-      const message = error instanceof Error ? error.message : "Failed to update profile.";
+      const message = error instanceof Error ? error.message : t("Failed to update profile.");
       toast.error(message);
     } finally {
       setIsSaving(false);
@@ -66,8 +67,8 @@ export function Profile({ name, email, githubUsername }: ProfileProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Profile</CardTitle>
-        <CardDescription>Manage the information displayed to other users.</CardDescription>
+        <CardTitle>{t("Profile")}</CardTitle>
+        <CardDescription>{t("Manage the information displayed to other users.")}</CardDescription>
       </CardHeader>
       <CardContent>
         <form
@@ -80,7 +81,7 @@ export function Profile({ name, email, githubUsername }: ProfileProps) {
           <div className="grid w-full items-center gap-4">
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="name" className="text-right">
-                Name
+                {t("Name")}
               </Label>
               <div className="col-span-3">
                 <Input
@@ -95,7 +96,7 @@ export function Profile({ name, email, githubUsername }: ProfileProps) {
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="picture" className="text-right">
-                Picture
+                {t("Picture")}
               </Label>
               <div className="col-span-3">
                 <Avatar className="h-24 w-24 rounded-md">
@@ -123,7 +124,7 @@ export function Profile({ name, email, githubUsername }: ProfileProps) {
           onClick={() => void handleSave()}
           disabled={!canSave}
         >
-          Save profile
+          {t("Save profile")}
           {isSaving && <Loader className="ml-2 h-4 w-4 animate-spin" />}
         </Button>
       </CardFooter>

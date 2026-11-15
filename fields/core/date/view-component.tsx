@@ -1,5 +1,7 @@
 "use client";
 import { parse, format, isValid } from "date-fns";
+import { nl as dateFnsNl } from "date-fns/locale";
+import { locale, t } from "@/lib/i18n";
 import { Field } from "@/types/field";
 import { CalendarIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -17,7 +19,7 @@ const ViewComponent = ({
   if (firstValue == null) return null;
   const extraValuesCount = Array.isArray(value) ? value.length - 1 : 0;
   const inputFormat = field.options?.time ? "yyyy-MM-dd'T'HH:mm" : "yyyy-MM-dd";
-  const outputFormat = field.options?.time ? "MMM d, yyyy - HH:mm" : "MMM d, yyyy";
+  const outputFormat = field.options?.time ? t("MMM d, yyyy - HH:mm") : t("MMM d, yyyy");
 
   const formatDate = (date: string) => {
     const parsedDate = parse(date, inputFormat, new Date());
@@ -25,7 +27,7 @@ const ViewComponent = ({
       console.warn(`Date for field '${field.name}' is saved in the wrong format or invalid: ${date}.`);
       return null;
     }
-    return format(parsedDate, outputFormat);
+    return format(parsedDate, outputFormat, { locale: locale === "nl" ? dateFnsNl : undefined });
   };
   
   return (

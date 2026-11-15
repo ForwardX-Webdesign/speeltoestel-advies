@@ -1,3 +1,4 @@
+import { t } from "@/lib/i18n";
 import { type HTMLAttributes, useEffect, useRef, useState } from "react";
 import type { Editor as TiptapEditor } from "@tiptap/core";
 import { EditorContent, useEditor, useEditorState } from "@tiptap/react";
@@ -233,14 +234,14 @@ const normalizeMarkdownTables = (markdown: string): string =>
     .join("\n");
 
 const blockOptions: Array<{ value: BlockType; label: string }> = [
-  { value: "paragraph", label: "Text" },
-  { value: "heading1", label: "Heading 1" },
-  { value: "heading2", label: "Heading 2" },
-  { value: "heading3", label: "Heading 3" },
-  { value: "bulletList", label: "Bulleted list" },
-  { value: "orderedList", label: "Numbered list" },
-  { value: "blockquote", label: "Quote" },
-  { value: "codeBlock", label: "Code block" },
+  { value: "paragraph", label: t("Text") },
+  { value: "heading1", label: t("Heading 1") },
+  { value: "heading2", label: t("Heading 2") },
+  { value: "heading3", label: t("Heading 3") },
+  { value: "bulletList", label: t("Bulleted list") },
+  { value: "orderedList", label: t("Numbered list") },
+  { value: "blockquote", label: t("Quote") },
+  { value: "codeBlock", label: t("Code block") },
 ];
 
 export function Editor({
@@ -308,7 +309,7 @@ export function Editor({
           node.type.name === "paragraph" &&
           !currentEditor.isActive("tableCell") &&
           !currentEditor.isActive("tableHeader")
-            ? "Press '/' for commands"
+            ? t("Press '/' for commands")
             : "",
         showOnlyCurrent: true,
         includeChildren: true,
@@ -554,7 +555,7 @@ export function Editor({
   const fileToDataUrl = (file: File): Promise<string> =>
     new Promise<string>((resolve, reject) => {
       const reader = new FileReader();
-      reader.onerror = () => reject(new Error("Failed to read image file."));
+      reader.onerror = () => reject(new Error(t("Failed to read image file.")));
       reader.onload = () => resolve(String(reader.result ?? ""));
       reader.readAsDataURL(file);
     });
@@ -682,7 +683,7 @@ export function Editor({
         finalizeImageUpload(uploadId, (attrs) => ({
           ...attrs,
           uploading: false,
-          uploadError: "Upload failed",
+          uploadError: t("Upload failed"),
         }));
         cleanupUpload(uploadId, { revokeBlob: false });
         return;
@@ -693,7 +694,7 @@ export function Editor({
         finalizeImageUpload(uploadId, (attrs) => ({
           ...attrs,
           uploading: false,
-          uploadError: "Image uploaded, but preview failed to load",
+          uploadError: t("Image uploaded, but preview failed to load"),
         }));
         cleanupUpload(uploadId, { revokeBlob: false });
         return;
@@ -720,7 +721,7 @@ export function Editor({
       finalizeImageUpload(uploadId, (attrs) => ({
         ...attrs,
         uploading: false,
-        uploadError: error instanceof Error ? error.message : "Upload failed",
+        uploadError: error instanceof Error ? error.message : t("Upload failed"),
       }));
       cleanupUpload(uploadId, { revokeBlob: false });
     }
@@ -767,42 +768,42 @@ export function Editor({
 
   const inlineActions: MenuAction[] = [
     {
-      label: "Bold",
+      label: t("Bold"),
       icon: Bold,
       isActive: () => activeState.bold,
       run: () => editor.chain().focus().toggleBold().run(),
       toggle: true,
     },
     {
-      label: "Italic",
+      label: t("Italic"),
       icon: Italic,
       isActive: () => activeState.italic,
       run: () => editor.chain().focus().toggleItalic().run(),
       toggle: true,
     },
     {
-      label: "Underline",
+      label: t("Underline"),
       icon: UnderlineIcon,
       isActive: () => activeState.underline,
       run: () => editor.chain().focus().toggleUnderline().run(),
       toggle: true,
     },
     {
-      label: "Strikethrough",
+      label: t("Strikethrough"),
       icon: Strikethrough,
       isActive: () => activeState.strike,
       run: () => editor.chain().focus().toggleStrike().run(),
       toggle: true,
     },
     {
-      label: "Code",
+      label: t("Code"),
       icon: Code,
       isActive: () => activeState.code,
       run: () => editor.chain().focus().toggleCode().run(),
       toggle: true,
     },
     {
-      label: "Remove formatting",
+      label: t("Remove formatting"),
       icon: RemoveFormatting,
       run: () => editor.chain().focus().unsetAllMarks().clearNodes().run(),
     },
@@ -947,7 +948,7 @@ export function Editor({
                   value={activeState.blockType}
                   onChange={(event) => setBlockType(event.target.value as BlockType)}
                   disabled={disabled}
-                  aria-label="Block style"
+                  aria-label={t("Block style")}
                   className="h-7 w-full appearance-none rounded-md border border-transparent bg-transparent px-2 pr-5.5 text-sm shadow-none outline-none hover:bg-accent focus-visible:outline-none focus-visible:ring-0 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {blockOptions.map((option) => (
@@ -973,7 +974,7 @@ export function Editor({
               }),
             )}
             {renderIconButton({
-              label: "Link",
+              label: t("Link"),
               icon: LinkIcon,
               onClick: openLinkInput,
               disabled,
@@ -983,8 +984,8 @@ export function Editor({
             {isOnImage ? (
               <button
                 type="button"
-                aria-label="Image alt text"
-                title="Image alt text"
+                aria-label={t("Image alt text")}
+                title={t("Image alt text")}
                 aria-pressed={showAltInput}
                 onClick={toggleAltInput}
                 disabled={disabled}
@@ -995,7 +996,7 @@ export function Editor({
             ) : null}
             {isInTable
               ? renderIconButton({
-                  label: "Table",
+                  label: t("Table"),
                   icon: TableIcon,
                   onClick: toggleTableActions,
                   disabled,
@@ -1027,13 +1028,13 @@ export function Editor({
                 className={`${toolbarInputClass} min-w-56 flex-1`}
               />
               {renderIconButton({
-                label: "Set link",
+                label: t("Set link"),
                 icon: Check,
                 onClick: applyLink,
                 disabled: disabled || !linkUrl.trim(),
               })}
               {renderIconButton({
-                label: "Remove link",
+                label: t("Remove link"),
                 icon: X,
                 onClick: confirmOrRemoveLink,
                 disabled,
@@ -1049,7 +1050,7 @@ export function Editor({
               <input
                 id="image-alt"
                 type="text"
-                placeholder="Describe image"
+                placeholder={t("Describe image")}
                 value={imageAltText}
                 onChange={(event) => setImageAltText(event.target.value)}
                 onKeyDown={(event) => {
@@ -1063,13 +1064,13 @@ export function Editor({
                 className={`${toolbarInputClass} min-w-56 flex-1`}
               />
               {renderIconButton({
-                label: "Save alt text",
+                label: t("Save alt text"),
                 icon: Check,
                 onClick: applyImageAlt,
                 disabled,
               })}
               {renderIconButton({
-                label: "Remove alt text",
+                label: t("Remove alt text"),
                 icon: X,
                 onClick: clearImageAlt,
                 disabled,
@@ -1082,29 +1083,29 @@ export function Editor({
               data-state="open"
               className="border-border bg-popover data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=open]:slide-in-from-top-1 inline-flex w-fit flex-nowrap items-center gap-1 overflow-x-auto self-end rounded-md border p-1 shadow-sm duration-200 whitespace-nowrap"
             >
-              <span className="text-sm ml-1 text-muted-foreground">Rows:</span>
+              <span className="text-sm ml-1 text-muted-foreground">{t("Rows:")}</span>
               {renderIconButton({
-                label: "Add row",
+                label: t("Add row"),
                 icon: Plus,
                 onClick: addRow,
                 disabled,
               })}
               {renderIconButton({
-                label: "Remove row",
+                label: t("Remove row"),
                 icon: Minus,
                 onClick: removeRow,
                 disabled,
               })}
               <span className="bg-border mx-0.5 h-4 w-px" aria-hidden="true" />
-              <span className="text-sm text-muted-foreground">Columns:</span>
+              <span className="text-sm text-muted-foreground">{t("Columns:")}</span>
               {renderIconButton({
-                label: "Add column",
+                label: t("Add column"),
                 icon: Plus,
                 onClick: addColumn,
                 disabled,
               })}
               {renderIconButton({
-                label: "Remove column",
+                label: t("Remove column"),
                 icon: Minus,
                 onClick: removeColumn,
                 disabled,

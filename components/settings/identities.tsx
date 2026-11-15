@@ -20,6 +20,7 @@ import {
   Loader,
   Mail,
 } from "lucide-react";
+import { t } from "@/lib/i18n";
 
 type IdentitiesProps = {
   email: string;
@@ -47,7 +48,7 @@ export function Identities({
         callbackURL: "/settings",
         errorCallbackURL: "/settings",
       });
-      if (result.error?.message) toast.error(result.error.message);
+      if (result.error?.message) toast.error(t(result.error.message));
     } finally {
       setPendingAction(null);
     }
@@ -65,17 +66,17 @@ export function Identities({
       const payload = await response.json().catch(() => null);
       if (!response.ok || !payload?.status) {
         const message =
-          payload?.message || "Failed to disconnect GitHub account.";
+          payload?.message || t("Failed to disconnect GitHub account.");
         throw new Error(message);
       }
 
-      toast.success("GitHub account disconnected.");
+      toast.success(t("GitHub account disconnected."));
       router.refresh();
     } catch (error) {
       const message =
         error instanceof Error
           ? error.message
-          : "Failed to disconnect GitHub account.";
+          : t("Failed to disconnect GitHub account.");
       toast.error(message);
     } finally {
       setPendingAction(null);
@@ -87,7 +88,7 @@ export function Identities({
       <li className="flex items-center gap-x-3 border border-b-0 first:rounded-t-md px-3 py-2 text-sm">
         <div className="flex items-center gap-x-2">
           <Mail className="h-4 w-4" />
-          <span className="font-medium">Email</span>
+          <span className="font-medium">{t("Email")}</span>
         </div>
         <div className="ml-2 truncate text-muted-foreground">{email}</div>
       </li>
@@ -103,7 +104,7 @@ export function Identities({
         </div>
         {githubConnected && (
           <div className="ml-2 truncate text-muted-foreground">
-            {githubUsername ? `@${githubUsername}` : "Connected"}
+            {githubUsername ? `@${githubUsername}` : t("Connected")}
           </div>
         )}
         {!githubConnected ? (
@@ -114,7 +115,7 @@ export function Identities({
             onClick={handleConnectGithub}
             disabled={pendingAction !== null}
           >
-            Connect
+            {t("Connect")}
             {pendingAction === "connect" && (
               <Loader className="h-4 w-4 animate-spin" />
             )}
@@ -133,7 +134,7 @@ export function Identities({
                 ) : (
                   <EllipsisVertical className="h-4 w-4" />
                 )}
-                <span className="sr-only">GitHub actions</span>
+                <span className="sr-only">{t("GitHub actions")}</span>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
@@ -141,7 +142,7 @@ export function Identities({
                 <>
                   <DropdownMenuItem asChild>
                     <a href={githubManageUrl} target="_blank" rel="noreferrer">
-                      Manage on GitHub
+                      {t("Manage on GitHub")}
                       <ArrowUpRight className="size-3 text-muted-foreground ml-auto" />
                     </a>
                   </DropdownMenuItem>
@@ -153,7 +154,7 @@ export function Identities({
                 onClick={handleDisconnectGithub}
                 disabled={pendingAction !== null}
               >
-                Disconnect
+                {t("Disconnect")}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

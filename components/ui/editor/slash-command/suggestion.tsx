@@ -1,3 +1,4 @@
+import { t } from "@/lib/i18n";
 import { ReactRenderer } from "@tiptap/react";
 import type { Editor } from "@tiptap/core";
 import tippy, { type Instance as TippyInstance } from "tippy.js";
@@ -39,7 +40,7 @@ type SuggestionOptions = {
   imageSlashFallback?: SlashImageFallback;
 };
 
-const TABLE_SAFE_COMMANDS = new Set(["Image"]);
+const TABLE_SAFE_COMMANDS = new Set([t("Image")]);
 
 type RequestImageAndInsertArgs = ImagePickerContext & {
   onRequestImage: ImagePickerHandler | null;
@@ -60,7 +61,7 @@ const requestImageAndInsert = async ({
   if (onRequestImage) {
     result = await onRequestImage({ editor, range });
   } else if (imageSlashFallback === "prompt-url") {
-    const src = window.prompt("Image URL")?.trim();
+    const src = window.prompt(t("Image URL"))?.trim();
     result = src ? { kind: "url", src } : null;
   }
 
@@ -94,37 +95,37 @@ const requestImageAndInsert = async ({
 
 const getAllItems = (options: SuggestionOptions): SlashItem[] => [
   {
-    title: "Text",
+    title: t("Text"),
     icon: Pilcrow,
     command: ({ editor, range }) => editor.chain().focus().deleteRange(range).setParagraph().run(),
   },
   {
-    title: "Heading 1",
+    title: t("Heading 1"),
     icon: Heading1,
     command: ({ editor, range }) => editor.chain().focus().deleteRange(range).setHeading({ level: 1 }).run(),
   },
   {
-    title: "Heading 2",
+    title: t("Heading 2"),
     icon: Heading2,
     command: ({ editor, range }) => editor.chain().focus().deleteRange(range).setHeading({ level: 2 }).run(),
   },
   {
-    title: "Heading 3",
+    title: t("Heading 3"),
     icon: Heading3,
     command: ({ editor, range }) => editor.chain().focus().deleteRange(range).setHeading({ level: 3 }).run(),
   },
   {
-    title: "Bulleted list",
+    title: t("Bulleted list"),
     icon: List,
     command: ({ editor, range }) => editor.chain().focus().deleteRange(range).toggleBulletList().run(),
   },
   {
-    title: "Numbered list",
+    title: t("Numbered list"),
     icon: ListOrdered,
     command: ({ editor, range }) => editor.chain().focus().deleteRange(range).toggleOrderedList().run(),
   },
   {
-    title: "Image",
+    title: t("Image"),
     icon: Image,
     command: ({ editor, range }) => {
       void requestImageAndInsert({
@@ -137,18 +138,18 @@ const getAllItems = (options: SuggestionOptions): SlashItem[] => [
     },
   },
   {
-    title: "Table",
+    title: t("Table"),
     icon: Table,
     command: ({ editor, range }) =>
       editor.chain().focus().deleteRange(range).insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run(),
   },
   {
-    title: "Quote",
+    title: t("Quote"),
     icon: Quote,
     command: ({ editor, range }) => editor.chain().focus().deleteRange(range).toggleBlockquote().run(),
   },
   {
-    title: "Code block",
+    title: t("Code block"),
     icon: Code,
     command: ({ editor, range }) => editor.chain().focus().deleteRange(range).toggleCodeBlock().run(),
   },
@@ -163,7 +164,7 @@ const createSuggestion = (options: SuggestionOptions = {}): SlashSuggestion => (
     const isInTableCell = editor.isActive("tableCell") || editor.isActive("tableHeader");
     return getAllItems(options)
       .filter((item) => !isInTableCell || TABLE_SAFE_COMMANDS.has(item.title))
-      .filter((item) => options.enableImages !== false || item.title !== "Image")
+      .filter((item) => options.enableImages !== false || item.title !== t("Image"))
       .filter((item) => item.title.toLowerCase().includes(query.toLowerCase()))
       .slice(0, 10);
   },

@@ -9,6 +9,7 @@ import { hasGithubIdentity } from "@/lib/authz-shared";
 import { isConfigEnabled } from "@/lib/config";
 import { cn } from "@/lib/utils";
 import { FileStack, FileText, FolderOpen, Settings, Users } from "lucide-react";
+import { t } from "@/lib/i18n";
 
 const RepoNavItem = ({
   children,
@@ -72,7 +73,7 @@ const RepoNav = ({
         key: "configuration",
         icon: <Settings className="h-5 w-5 mr-2" />,
         href: `/${config.owner}/${config.repo}/${encodeURIComponent(config.branch)}/configuration`,
-        label: "Configuration"
+        label: t("Configuration")
       }
       : null;
 
@@ -81,7 +82,7 @@ const RepoNav = ({
         key: "collaborators",
         icon: <Users className="h-5 w-5 mr-2" />,
         href: `/${config.owner}/${config.repo}/${encodeURIComponent(config.branch)}/collaborators`,
-        label: "Collaborators"
+        label: t("Collaborators")
       }
       : null;
 

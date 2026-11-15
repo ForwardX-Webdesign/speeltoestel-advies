@@ -1,3 +1,4 @@
+import { t } from "@/lib/i18n";
 import { z } from "zod";
 import { Field } from "@/types/field";
 import { EditComponent } from "./edit-component";
@@ -7,7 +8,7 @@ const defaultValue = (): string => {
 };
 
 const schema = (field: Field, configObject?: Record<string, any>) => {
-  let zodSchema: z.ZodTypeAny = z.string().uuid("Invalid UUID format");
+  let zodSchema: z.ZodTypeAny = z.string().uuid(t("Invalid UUID format"));
 
   if (!field.required) zodSchema = zodSchema.optional().nullable();
 

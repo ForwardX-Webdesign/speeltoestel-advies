@@ -14,6 +14,7 @@ import {
   Tailwind,
 } from "@react-email/components";
 import { emailTheme } from "@/components/email/theme";
+import { t } from "@/lib/i18n";
 
 export const CollaboratorAddedEmailTemplate = ({
   email,
@@ -38,7 +39,7 @@ export const CollaboratorAddedEmailTemplate = ({
     <Html>
       <Head />
       <Preview>
-        You were added to &quot;{repoName}&quot; on ForwardX CMS
+        {t('You were added to "{repo}" on ForwardX CMS', { repo: repoName })}
       </Preview>
       <Tailwind>
         <Body
@@ -62,7 +63,7 @@ export const CollaboratorAddedEmailTemplate = ({
               className="text-[24px] font-semibold p-0 my-[30px] mx-0 text-center tracking-tight"
               style={{ color: emailTheme.foreground }}
             >
-              You were added to &quot;{repoName}&quot;
+              {t('You were added to "{repo}"', { repo: repoName })}
             </Heading>
             <Text
               className="text-[16px] leading-[24px]"
@@ -75,8 +76,7 @@ export const CollaboratorAddedEmailTemplate = ({
               >
                 {invitedByName}
               </Link>{" "}
-              added you to the &quot;{repoName}&quot; project on ForwardX CMS.
-              You already have access, so there is nothing to accept.
+              {t('added you to the "{repo}" project on ForwardX CMS. You already have access, so there is nothing to accept.', { repo: repoName })}
             </Text>
             <Section className="text-center mt-[24px] mb-[24px]">
               <Button
@@ -88,14 +88,14 @@ export const CollaboratorAddedEmailTemplate = ({
                   color: emailTheme.buttonForeground,
                 }}
               >
-                Open &quot;{repoName}&quot;
+                {t('Open "{repo}"', { repo: repoName })}
               </Button>
             </Section>
             <Text
               className="text-[14px] leading-[24px] mt-[36px]"
               style={{ color: emailTheme.mutedForeground }}
             >
-              This email was intended for{" "}
+              {t("This email was intended for")}{" "}
               <Link
                 href={`mailto:${email}`}
                 className="underline"

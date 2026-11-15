@@ -63,6 +63,7 @@ import {
   ArrowUpRight,
   ChevronRight,
   ChevronsUpDown,
+  CircleHelp,
   Database,
   FileStack,
   FileText,
@@ -200,13 +201,13 @@ function RepoSwitcher() {
                 target="_blank"
                 rel="noreferrer"
               >
-                View on GitHub
+                {t("View on GitHub")}
                 <ArrowUpRight className="size-3 text-muted-foreground ml-auto" />
               </a>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuLabel className="text-xs text-muted-foreground">
-              Branches
+              {t("Branches")}
             </DropdownMenuLabel>
             <DropdownMenuRadioGroup
               value={currentBranch}
@@ -220,14 +221,14 @@ function RepoSwitcher() {
             </DropdownMenuRadioGroup>
             <DropdownMenuSeparator />
             <DialogTrigger asChild>
-              <DropdownMenuItem>Manage branches</DropdownMenuItem>
+              <DropdownMenuItem>{t("Manage branches")}</DropdownMenuItem>
             </DialogTrigger>
             </>)}
             {recentRepos.length > 0 && (
               <>
                 {!isClientView && <DropdownMenuSeparator />}
                 <DropdownMenuLabel className="text-xs text-muted-foreground">
-                  Recently visited
+                  {t("Recently visited")}
                 </DropdownMenuLabel>
                 {recentRepos.map((visit) => (
                   <DropdownMenuItem
@@ -239,7 +240,7 @@ function RepoSwitcher() {
                     >
                       <img
                         src={`https://github.com/${visit.owner}.png`}
-                        alt={`${visit.owner}'s avatar`}
+                        alt={t("{name}'s avatar", { name: visit.owner })}
                         className="size-5 rounded"
                       />
                       <span className="truncate">{visit.repo}</span>
@@ -250,14 +251,14 @@ function RepoSwitcher() {
             )}
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
-              <Link href="/">All projects</Link>
+              <Link href="/">{t("All projects")}</Link>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Manage branches</DialogTitle>
+          <DialogTitle>{t("Manage branches")}</DialogTitle>
         </DialogHeader>
         <RepoBranches />
       </DialogContent>
@@ -335,7 +336,7 @@ export function RepoSidebar() {
     if (canManageRepo && isCacheEnabled(configObject)) {
       items.push({
         key: "admin-cache",
-        label: "Cache",
+        label: t("Cache"),
         href: `/${config.owner}/${config.repo}/${encodeURIComponent(config.branch)}/cache`,
         icon: <Database className="size-4" />,
       });
@@ -344,14 +345,14 @@ export function RepoSidebar() {
     if (canManageRepo) {
       items.push({
         key: "admin-actions",
-        label: "Actions",
+        label: t("Actions"),
         href: `/${config.owner}/${config.repo}/${encodeURIComponent(config.branch)}/actions`,
         icon: <ListVideo className="size-4" />,
       });
 
       items.push({
         key: "admin-collaborators",
-        label: "Collaborators",
+        label: t("Collaborators"),
         href: `/${config.owner}/${config.repo}/${encodeURIComponent(config.branch)}/collaborators`,
         icon: <Users className="size-4" />,
       });
@@ -360,7 +361,7 @@ export function RepoSidebar() {
     if (canManageRepo && isConfigEnabled(configObject)) {
       items.push({
         key: "admin-configuration",
-        label: "Configuration",
+        label: t("Configuration"),
         href: `/${config.owner}/${config.repo}/${encodeURIComponent(config.branch)}/configuration`,
         icon: <Settings className="size-4" />,
       });
@@ -537,7 +538,7 @@ export function RepoSidebar() {
 
     return (
       <SidebarGroup>
-        <SidebarGroupLabel>{label}</SidebarGroupLabel>
+        <SidebarGroupLabel>{t(label)}</SidebarGroupLabel>
         <SidebarGroupContent>
           <SidebarMenu>
             {nodes.map((node) => renderNavigationNode(node, `${label}-${node.name}`))}
@@ -552,7 +553,7 @@ export function RepoSidebar() {
 
     return (
       <SidebarGroup>
-        <SidebarGroupLabel>{label}</SidebarGroupLabel>
+        <SidebarGroupLabel>{t(label)}</SidebarGroupLabel>
         <SidebarGroupContent>
           <SidebarMenu>
             {items.map((item) => {
@@ -581,7 +582,7 @@ export function RepoSidebar() {
     rootActions.length > 0 && config
       ? (
         <SidebarGroup key="Actions">
-          <SidebarGroupLabel>Actions</SidebarGroupLabel>
+          <SidebarGroupLabel>{t("Actions")}</SidebarGroupLabel>
           <SidebarGroupContent>
             <RepoActionButtons
               actions={rootActions}
@@ -613,6 +614,16 @@ export function RepoSidebar() {
         ))}
       </SidebarContent>
       <SidebarFooter className="border-t">
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild>
+              <Link href="/uitleg" onClick={handleNavigation}>
+                <CircleHelp className="size-4" />
+                <span>{t("Help")}</span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             <User align="start" />

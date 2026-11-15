@@ -7,6 +7,7 @@ import { requireGithubRepoWriteAccess } from "@/lib/authz-server";
 import { InviteEmailTemplate } from "@/components/email/invite";
 import { CollaboratorAddedEmailTemplate } from "@/components/email/collaborator-added";
 import { render } from "@react-email/render";
+import { t } from "@/lib/i18n";
 import { sendEmail } from "@/lib/mailer";
 import { getBaseUrl } from "@/lib/base-url";
 import { db } from "@/db";
@@ -188,7 +189,7 @@ const handleAddCollaborator = async (prevState: any, formData: FormData) => {
           );
           await sendEmail({
             to: normalizedEmail,
-            subject: `Join "${owner}/${repo}" on ForwardX CMS`,
+            subject: t('Join "{repo}" on ForwardX CMS', { repo: `${owner}/${repo}` }),
             html,
           });
         } catch (error: any) {
@@ -209,7 +210,7 @@ const handleAddCollaborator = async (prevState: any, formData: FormData) => {
           );
           await sendEmail({
             to: normalizedEmail,
-            subject: `You were added to "${owner}/${repo}" on ForwardX CMS`,
+            subject: t('You were added to "{repo}" on ForwardX CMS', { repo: `${owner}/${repo}` }),
             html,
           });
         } catch (error: any) {
@@ -338,7 +339,7 @@ const handleResendCollaboratorInvite = async (collaboratorId: number, owner: str
 
     await sendEmail({
       to: collaborator.email,
-      subject: `Join "${owner}/${repo}" on ForwardX CMS`,
+      subject: t('Join "{repo}" on ForwardX CMS', { repo: `${owner}/${repo}` }),
       html,
     });
 

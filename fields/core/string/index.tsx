@@ -1,3 +1,4 @@
+import { t } from "@/lib/i18n";
 import { EditComponent } from "./edit-component";
 import { z } from "zod";
 import { Field } from "@/types/field";
@@ -5,16 +6,16 @@ import { Field } from "@/types/field";
 const schema = (field: Field, configObject?: Record<string, any>) => {
   let zodSchema = z.string();
   
-  if (field.required) zodSchema = zodSchema.min(1, "This field is required");
+  if (field.required) zodSchema = zodSchema.min(1, t("This field is required"));
   if (field.pattern) {
     if (typeof field.pattern === "string") {
-      zodSchema = zodSchema.regex(new RegExp(field.pattern), "Invalid format");
+      zodSchema = zodSchema.regex(new RegExp(field.pattern), t("Invalid format"));
     } else {
-      zodSchema = zodSchema.regex(new RegExp(field.pattern.regex), field.pattern.message || "Invalid pattern format");
+      zodSchema = zodSchema.regex(new RegExp(field.pattern.regex), field.pattern.message || t("Invalid format"));
     }
   }
-  if (field.options?.minlength) zodSchema = zodSchema.min(field.options.minlength as number, `Minimum length is ${field.options.minlength} characters`);
-  if (field.options?.maxlength) zodSchema = zodSchema.max(field.options.maxlength as number, `Maximum length is ${field.options.maxlength} characters`);
+  if (field.options?.minlength) zodSchema = zodSchema.min(field.options.minlength as number, t("Minimum length is {count} characters", { count: field.options.minlength as number }));
+  if (field.options?.maxlength) zodSchema = zodSchema.max(field.options.maxlength as number, t("Maximum length is {count} characters", { count: field.options.maxlength as number }));
   
   return zodSchema;
 };

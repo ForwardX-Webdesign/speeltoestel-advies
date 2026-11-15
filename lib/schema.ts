@@ -2,6 +2,7 @@
  * Helper functions for the schema defined in .pages.yml
  */
 
+import { t } from "@/lib/i18n";
 import slugify from "slugify";
 import { defaultValues, schemas } from "@/fields/registry";
 import { z } from "zod";
@@ -208,14 +209,14 @@ const generateZodSchema = (
         let arraySchema = z.array(fieldSchema);
         if (typeof field.list === "object") {
           if (field.list.min && typeof field.list.min === "number" && field.list.min > 0) {
-            arraySchema = arraySchema.min(field.list.min);
+            arraySchema = arraySchema.min(field.list.min, { message: t("Add at least {count} items", { count: field.list.min }) });
           }
           if (field.list.max && typeof field.list.max === "number" && field.list.max > 0) {
-            arraySchema = arraySchema.max(field.list.max);
+            arraySchema = arraySchema.max(field.list.max, { message: t("Add at most {count} items", { count: field.list.max }) });
           }
         }
         if (field.required) {
-          arraySchema = arraySchema.min(1, { message: `Field requires at least one item.` });
+          arraySchema = arraySchema.min(1, { message: t("Field requires at least one item.") });
           fieldSchema = arraySchema;
         } else {
           fieldSchema = arraySchema.optional();
@@ -229,7 +230,7 @@ const generateZodSchema = (
           if (field.type === 'block') {
             fieldSchema = fieldSchema.refine(
               (val) => val != null && typeof val === 'object' && Object.keys(val).length > 0,
-              { message: "Please select a block." }
+              { message: t("Please select a block.") }
             );
           }
         }

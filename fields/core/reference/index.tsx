@@ -1,3 +1,4 @@
+import { t } from "@/lib/i18n";
 import { z } from "zod";
 import { Field } from "@/types/field";
 import { EditComponent } from "./edit-component";
@@ -20,11 +21,11 @@ const schema = (field: Field) => {
 
   if (field.options?.multiple) {
     let zodSchema = z.array(singleValueSchema.refine((value) => value.length > 0, {
-      message: "Invalid reference",
+      message: t("Invalid reference"),
     }));
-    if (field.required) zodSchema = zodSchema.min(1, "This field is required");
-    if (min !== undefined) zodSchema = zodSchema.min(min, `Select at least ${min} reference${min === 1 ? "" : "s"}`);
-    if (max !== undefined) zodSchema = zodSchema.max(max, `Select at most ${max} reference${max === 1 ? "" : "s"}`);
+    if (field.required) zodSchema = zodSchema.min(1, t("This field is required"));
+    if (min !== undefined) zodSchema = zodSchema.min(min, min === 1 ? t("Select at least {count} reference", { count: min }) : t("Select at least {count} references", { count: min }));
+    if (max !== undefined) zodSchema = zodSchema.max(max, max === 1 ? t("Select at most {count} reference", { count: max }) : t("Select at most {count} references", { count: max }));
 
     return z.preprocess(
       (val) => {
@@ -38,7 +39,7 @@ const schema = (field: Field) => {
   return z.preprocess(
     (val) => (val === null || val === undefined ? "" : val),
     field.required
-      ? singleValueSchema.refine((value) => value.length > 0, { message: "This field is required" })
+      ? singleValueSchema.refine((value) => value.length > 0, { message: t("This field is required") })
       : z.union([z.literal(""), singleValueSchema]).optional()
   );
 };

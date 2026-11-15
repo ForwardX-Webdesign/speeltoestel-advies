@@ -1,5 +1,6 @@
 "use client";
 
+import { t } from "@/lib/i18n";
 import { forwardRef, useCallback, useState, useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { ButtonGroup } from "@/components/ui/button-group";
@@ -62,13 +63,13 @@ const ImageTeaser = ({ file, config, onRemove }: {
                 href={`https://github.com/${config.owner}/${config.repo}/blob/${config.branch}/${file}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label="View image on GitHub"
+                aria-label={t("View image on GitHub")}
               >
                 <ArrowUpRight />
               </a>
             </Button>
           </TooltipTrigger>
-          <TooltipContent>View on GitHub</TooltipContent>
+          <TooltipContent>{t("View on GitHub")}</TooltipContent>
         </Tooltip>
         {onRemove && (
           <Tooltip>
@@ -79,12 +80,12 @@ const ImageTeaser = ({ file, config, onRemove }: {
                 size="icon-xs"
                 className="text-muted-foreground hover:text-foreground"
                 onClick={onRemove}
-                aria-label="Remove image"
+                aria-label={t("Remove image")}
               >
                 <Trash2 />
               </Button>
             </TooltipTrigger>
-            <TooltipContent>Remove</TooltipContent>
+            <TooltipContent>{t("Remove")}</TooltipContent>
           </Tooltip>
         )}
       </ButtonGroup>
@@ -258,12 +259,12 @@ const EditComponent = forwardRef((props: EditorProps, ref: React.Ref<HTMLInputEl
   if (!mediaConfig) {
     return (
       <p className="text-muted-foreground bg-muted rounded-md px-3 py-2">
-      No media configuration found. {' '}
+      {t("No media configuration found.")} {' '}
       <a 
         href={`/${config.owner}/${config.repo}/${encodeURIComponent(config.branch || "")}/settings`}
         className="underline hover:text-foreground"
       >
-        Check your settings
+        {t("Check your settings")}
       </a>.
     </p>
     );
@@ -321,7 +322,7 @@ const EditComponent = forwardRef((props: EditorProps, ref: React.Ref<HTMLInputEl
               <MediaUpload.Trigger>
                 <Button type="button" size="sm" variant="outline" className="gap-2">
                   <Upload className="h-3.5 w-3.5"/>
-                  Upload
+                  {t("Upload")}
                 </Button>
               </MediaUpload.Trigger>
               <MediaDialog
@@ -333,7 +334,7 @@ const EditComponent = forwardRef((props: EditorProps, ref: React.Ref<HTMLInputEl
               >
                   <Button type="button" size="sm" variant="outline">
                     <FolderOpen />
-                    Select
+                    {t("Select")}
                   </Button>
               </MediaDialog>
             </div>

@@ -1,5 +1,6 @@
 "use client";
 
+import { t } from "@/lib/i18n";
 import { useMemo } from "react";
 import { cn } from "@/lib/utils";
 import {
@@ -84,7 +85,7 @@ const EditComponent = (props: any) => {
 
   const placeholder = isReadonly
     ? undefined
-    : field.options?.placeholder || "Select...";
+    : field.options?.placeholder || t("Select...");
 
   const handleValueChange = (nextValue: Option[] | Option | null) => {
     if (isReadonly) return;
@@ -135,7 +136,7 @@ const EditComponent = (props: any) => {
             </ComboboxValue>
           </ComboboxChips>
           <ComboboxContent anchor={anchor}>
-            <ComboboxEmpty>No options found.</ComboboxEmpty>
+            <ComboboxEmpty>{t("No options found.")}</ComboboxEmpty>
             <ComboboxList>
               {(option: Option) => (
                 <ComboboxItem key={option.value} value={option}>
@@ -154,7 +155,7 @@ const EditComponent = (props: any) => {
             readOnly={isReadonly}
           />
           <ComboboxContent>
-            <ComboboxEmpty>No options found.</ComboboxEmpty>
+            <ComboboxEmpty>{t("No options found.")}</ComboboxEmpty>
             <ComboboxList>
               {(option: Option) => (
                 <ComboboxItem key={option.value} value={option}>

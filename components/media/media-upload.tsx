@@ -1,5 +1,6 @@
 "use client";
 
+import { t } from "@/lib/i18n";
 import { useRef, cloneElement, useMemo, useCallback, createContext, useContext, useState } from "react";
 import { useConfig } from "@/contexts/config-context";
 import { getUploadFileName, joinPathSegments } from "@/lib/utils/file";
@@ -78,7 +79,7 @@ function MediaUploadRoot({ children, path, onUpload, media, extensions, multiple
               const base64Content = (reader.result as string).replace(/^(.+,)/, "");
               resolve(base64Content);
             };
-            reader.onerror = () => reject(new Error("Failed to read file"));
+            reader.onerror = () => reject(new Error(t("Failed to read file")));
             reader.readAsDataURL(file);
           });
 
@@ -95,19 +96,19 @@ function MediaUploadRoot({ children, path, onUpload, media, extensions, multiple
 
           const data = await requireApiSuccess<any>(
             response,
-            "Failed to upload file",
+            t("Failed to upload file"),
           );
 
           return data.data as FileSaveData;
         })();
 
         await toast.promise(uploadPromise, {
-          loading: `Uploading ${file.name}`,
+          loading: t("Uploading {name}", { name: file.name }),
           success: (savedEntry) => {
             onUpload?.(savedEntry);
-            return `Uploaded ${file.name}`;
+            return t("Uploaded {name}", { name: file.name });
           },
-          error: (error: unknown) => error instanceof Error ? error.message : "Upload failed",
+          error: (error: unknown) => error instanceof Error ? error.message : t("Upload failed"),
         });
       }
     } catch (error) {
@@ -145,12 +146,12 @@ function MediaUploadTrigger({ children }: MediaUploadTriggerProps) {
     });
 
     if (validFiles.length === 0) {
-      toast.error(`Invalid file type. Allowed: ${context.accept}`);
+      toast.error(t("Invalid file type. Allowed: {types}", { types: context.accept }));
       return [];
     }
 
     if (validFiles.length !== files.length) {
-      toast.error(`Some files were skipped. Allowed: ${context.accept}`);
+      toast.error(t("Some files were skipped. Allowed: {types}", { types: context.accept }));
     }
 
     return validFiles;
@@ -203,12 +204,12 @@ function MediaUploadDropZone({ children, className }: MediaUploadDropZoneProps) 
     });
 
     if (validFiles.length === 0) {
-      toast.error(`Invalid file type. Allowed: ${context.accept}`);
+      toast.error(t("Invalid file type. Allowed: {types}", { types: context.accept }));
       return [];
     }
 
     if (validFiles.length !== files.length) {
-      toast.error(`Some files were skipped. Allowed: ${context.accept}`);
+      toast.error(t("Some files were skipped. Allowed: {types}", { types: context.accept }));
     }
 
     return validFiles;
@@ -251,7 +252,7 @@ function MediaUploadDropZone({ children, className }: MediaUploadDropZoneProps) 
       {!context.disabled && isDragging && (
         <div className="absolute inset-0 bg-primary/10 rounded-lg flex items-center justify-center">
           <p className="text-sm text-foreground font-medium bg-background rounded-full px-3 py-1">
-            Drop files here to upload
+            {t("Drop files here to upload")}
           </p>
         </div>
       )}

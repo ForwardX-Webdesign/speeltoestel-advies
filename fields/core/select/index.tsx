@@ -1,3 +1,4 @@
+import { t } from "@/lib/i18n";
 import { z } from "zod";
 import { Field } from "@/types/field";
 import { EditComponent } from "./edit-component";
@@ -15,15 +16,15 @@ const schema = (field: Field) => {
 
   const optionSchema = z.string().refine(
     (value) => normalizedValues.includes(value),
-    { message: normalizedValues.length === 0 ? "This select field requires options.values" : "Invalid option" }
+    { message: normalizedValues.length === 0 ? "This select field requires options.values" : t("Invalid option") }
   );
 
   if (field.options?.multiple) {
     let zodSchema = z.array(optionSchema);
 
-    if (field.required) zodSchema = zodSchema.min(1, "This field is required");
-    if (min !== undefined) zodSchema = zodSchema.min(min, `Select at least ${min} option${min === 1 ? "" : "s"}`);
-    if (max !== undefined) zodSchema = zodSchema.max(max, `Select at most ${max} option${max === 1 ? "" : "s"}`);
+    if (field.required) zodSchema = zodSchema.min(1, t("This field is required"));
+    if (min !== undefined) zodSchema = zodSchema.min(min, min === 1 ? t("Select at least {count} option", { count: min }) : t("Select at least {count} options", { count: min }));
+    if (max !== undefined) zodSchema = zodSchema.max(max, max === 1 ? t("Select at most {count} option", { count: max }) : t("Select at most {count} options", { count: max }));
 
     return z.preprocess(
       (val) => {

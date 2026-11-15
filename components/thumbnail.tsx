@@ -1,5 +1,6 @@
 "use client";
 
+import { t } from "@/lib/i18n";
 import { useState, useEffect } from "react";
 import { getRawUrl } from "@/lib/github-image";
 import { useRepo } from "@/contexts/repo-context";
@@ -54,7 +55,7 @@ export function Thumbnail({
         ? rawUrl
           ? <img
               src={rawUrl}
-              alt={path.split("/").pop() || "thumbnail"}
+              alt={path.split("/").pop() || t("thumbnail")}
               loading="lazy"
               className="absolute inset-0 w-full h-full object-cover"
             />
@@ -62,10 +63,10 @@ export function Thumbnail({
             ? <div className="flex justify-center items-center absolute inset-0 text-muted-foreground" title={error}>
                 <Ban className="h-4 w-4"/>
               </div>
-            : <div className="flex justify-center items-center absolute inset-0 text-muted-foreground" title="Loading...">
+            : <div className="flex justify-center items-center absolute inset-0 text-muted-foreground" title={t("Loading...")}>
                 <Loader className="h-4 w-4 animate-spin"/>
               </div>
-        : <div className="flex justify-center items-center absolute inset-0 text-muted-foreground" title="No image">
+        : <div className="flex justify-center items-center absolute inset-0 text-muted-foreground" title={t("No image")}>
             <ImageOff className="h-4 w-4"/>
           </div>
       }

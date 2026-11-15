@@ -21,6 +21,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import packageJson from "../package.json";
+import { t } from "@/lib/i18n";
 
 const releaseRef = process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_REF;
 const inferredTagVersion =
@@ -78,11 +79,11 @@ export function About() {
                 <span className="bg-[#000516] text-white rounded-md size-6 flex items-center justify-center">
                   <Logo className="size-3.5" />
                 </span>
-                <span className="sr-only">About ForwardX CMS</span>
+                <span className="sr-only">{t("About ForwardX CMS")}</span>
               </Button>
             </DialogTrigger>
           </TooltipTrigger>
-          <TooltipContent>About ForwardX CMS</TooltipContent>
+          <TooltipContent>{t("About ForwardX CMS")}</TooltipContent>
         </Tooltip>
       </TooltipProvider>
       <DialogContent className="w-[20rem] max-w-[calc(100vw-2rem)]">
@@ -94,14 +95,13 @@ export function About() {
             ForwardX CMS
           </DialogTitle>
           <DialogDescription>
-            The ForwardX content editor for client websites. Edits are saved
-            straight to GitHub.
+            {t("The ForwardX content editor for client websites. Edits are saved straight to GitHub.")}
           </DialogDescription>
         </DialogHeader>
 
         <div className="rounded-lg border">
           <Row
-            label="Version"
+            label={t("Version")}
             value={
               <div className="flex items-center gap-2">
                 <span className="text-sm">{version}</span>
@@ -116,7 +116,7 @@ export function About() {
                       variant="secondary"
                       className="bg-primary/10 font-medium text-primary"
                     >
-                      Update to {latestVersion}
+                      {t("Update to {version}", { version: latestVersion })}
                       <ArrowUpRight className="ml-1 size-3" />
                     </Badge>
                   </a>
@@ -125,7 +125,7 @@ export function About() {
             }
           />
           <Row
-            label="Website"
+            label={t("Website")}
             value={
               <ExternalLink href="https://forwardx.nl">
                 forwardx.nl
@@ -133,7 +133,7 @@ export function About() {
             }
           />
           <Row
-            label="Docs"
+            label={t("Docs")}
             value={
               <ExternalLink href="https://pagescms.org/docs">
                 pagescms.org/docs
@@ -141,7 +141,7 @@ export function About() {
             }
           />
           <Row
-            label="Based on"
+            label={t("Based on")}
             value={
               <ExternalLink href="https://github.com/pagescms/pagescms">
                 Pages CMS (MIT)

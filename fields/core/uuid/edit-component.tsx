@@ -1,5 +1,6 @@
 "use client";
 
+import { t } from "@/lib/i18n";
 import { forwardRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -43,7 +44,7 @@ const EditComponent = forwardRef((props: any, ref: React.Ref<HTMLInputElement>) 
               </Button>
             </TooltipTrigger>
             <TooltipContent>
-              <p>Generate new UUID</p>
+              <p>{t("Generate new UUID")}</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>

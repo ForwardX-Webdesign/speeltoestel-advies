@@ -1,5 +1,6 @@
 "use client";
 
+import { t } from "@/lib/i18n";
 import { useEffect, useMemo, useState } from "react";
 import { Loader } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -223,7 +224,7 @@ const EditComponent = (props: any) => {
     : null;
   const placeholder = isReadonly
     ? undefined
-    : field.options?.placeholder || "Select...";
+    : field.options?.placeholder || t("Select...");
 
   const handleValueChange = (nextValue: Option[] | Option | null) => {
     if (isReadonly) return;
@@ -279,11 +280,11 @@ const EditComponent = (props: any) => {
             </ComboboxValue>
           </ComboboxChips>
           <ComboboxContent anchor={anchor}>
-            {!isLoading && <ComboboxEmpty>No options found.</ComboboxEmpty>}
+            {!isLoading && <ComboboxEmpty>{t("No options found.")}</ComboboxEmpty>}
             {isLoading && (
               <div className="flex items-center justify-center gap-2 py-2 text-center text-sm text-muted-foreground">
                 <Loader className="h-4 w-4 animate-spin" />
-                Loading options...
+                {t("Loading options...")}
               </div>
             )}
             <ComboboxList>
@@ -305,11 +306,11 @@ const EditComponent = (props: any) => {
             readOnly={isReadonly}
           />
           <ComboboxContent>
-            {!isLoading && <ComboboxEmpty>No options found.</ComboboxEmpty>}
+            {!isLoading && <ComboboxEmpty>{t("No options found.")}</ComboboxEmpty>}
             {isLoading && (
               <div className="flex items-center justify-center gap-2 py-2 text-center text-sm text-muted-foreground">
                 <Loader className="h-4 w-4 animate-spin" />
-                Loading options...
+                {t("Loading options...")}
               </div>
             )}
             <ComboboxList>
