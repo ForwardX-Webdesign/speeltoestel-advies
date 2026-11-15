@@ -1,4 +1,4 @@
-import { MainRootLayout } from "../main-root-layout";
+import { Logo } from "@/components/logo";
 import { DocumentTitle } from "@/components/document-title";
 import { HelpBackButton, HelpTopics } from "@/components/help/help-topics";
 import { helpContact, helpTopics } from "@/lib/help";
@@ -6,10 +6,15 @@ import { t } from "@/lib/i18n";
 
 export default function Page() {
   return (
-    <MainRootLayout>
+    <main className="min-h-screen">
       <DocumentTitle title={t("Help")} />
       <div className="mx-auto max-w-screen-sm space-y-6 p-4 md:p-6">
-        <HelpBackButton label={t("Back")} />
+        <div className="flex items-center justify-between gap-2">
+          <HelpBackButton label={t("Back")} />
+          <span className="flex size-8 items-center justify-center rounded-lg bg-[#000516] text-white">
+            <Logo className="size-4" />
+          </span>
+        </div>
         <header className="space-y-1">
           <h1 className="text-lg font-semibold tracking-tight md:text-2xl">
             {t("Help")}
@@ -32,6 +37,6 @@ export default function Page() {
           .
         </p>
       </div>
-    </MainRootLayout>
+    </main>
   );
 }

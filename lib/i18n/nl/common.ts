@@ -26,6 +26,7 @@ const common: Record<string, string> = {
     "Je wijziging staat meestal binnen een paar minuten op de website.",
   "View page": "Bekijk pagina",
   "Help": "Uitleg",
+  "Need help signing in?": "Hulp bij inloggen?",
   "Back": "Terug",
   "Short guides for the things you do most often.":
     "Korte uitleg bij de dingen die je het vaakst doet.",

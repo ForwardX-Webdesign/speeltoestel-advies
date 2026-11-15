@@ -144,7 +144,13 @@ export function SignIn() {
       >
         ForwardX
       </a>
-      .
+      .{" "}
+      <a
+        className="underline hover:decoration-muted-foreground/50"
+        href="/uitleg#inloggen"
+      >
+        {t("Need help signing in?")}
+      </a>
     </p>
   );
 
