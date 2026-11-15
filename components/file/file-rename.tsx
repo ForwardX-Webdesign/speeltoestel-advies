@@ -65,7 +65,7 @@ export function FileRename({
               newPath,
             }),
           });
-          const data = await requireApiSuccess<any>(response, t(t("Failed to rename file")));
+          const data = await requireApiSuccess<any>(response, t("Failed to rename file"));
 
           resolve(data);
         } catch (error) {

@@ -12,6 +12,7 @@ Wat ForwardX heeft toegevoegd:
 - Klantweergave: wie per e-mail is uitgenodigd en geen GitHub-account heeft, ziet geen branches, GitHub-links of beheerschermen.
 - Na het opslaan meldt de editor dat de wijziging binnen een paar minuten online staat, met een knop naar de pagina.
 - Startconfiguratie voor kapsalonsites in `templates/kapsalon.pages.yml`.
+- Uitlegpagina op `/uitleg`, bereikbaar via het menu: korte stappen per onderwerp, met per onderwerp plek voor een video.
 
 ## Klanten laten werken
 
@@ -20,6 +21,10 @@ Wat ForwardX heeft toegevoegd:
 3. De klant logt in met een code per e-mail. Een GitHub-account is niet nodig.
 
 Geef velden in `.pages.yml` altijd een `label` in gewone taal en waar nodig een `description` met een voorbeeld: dat is wat de klant ziet.
+
+## Uitleg en video's
+
+De onderwerpen van de uitlegpagina staan in `lib/help.ts`. Zet een video in `public/help/` en vul bij het onderwerp `video: { src: "/help/naam.mp4" }` in; de pagina toont de video dan boven de stappen. Zonder video staan alleen de stappen er.
 
 ## Taal
 

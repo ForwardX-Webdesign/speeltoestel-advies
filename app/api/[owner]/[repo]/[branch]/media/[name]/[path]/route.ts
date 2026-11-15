@@ -2,6 +2,7 @@ import { getRepoReadContext } from "@/lib/api-repo-context";
 import { getFileExtension, normalizePath } from "@/lib/utils/file";
 import { getMediaCache } from "@/lib/github-cache-file";
 import { createHttpError, toErrorResponse } from "@/lib/api-error";
+import { t } from "@/lib/i18n";
 
 /**
  * Get the list of media files in a directory.
@@ -22,8 +23,8 @@ export async function GET(
     const mediaConfig = config.object.media.find((item: any) => item.name === params.name) || config.object.media[0];
 
     if (!mediaConfig) {
-      if (params.name) throw createHttpError(`No media configuration named "${params.name}" found for ${params.owner}/${params.repo}/${params.branch}.`, 404);
-      throw createHttpError(`No media configuration found for ${params.owner}/${params.repo}/${params.branch}.`, 404);
+      if (params.name) throw createHttpError(t("No media configuration named \"{name}\" found for {owner}/{repo}/{branch}.", { name: params.name, owner: params.owner, repo: params.repo, branch: params.branch }), 404);
+      throw createHttpError(t("No media configuration found for {owner}/{repo}/{branch}.", { owner: params.owner, repo: params.repo, branch: params.branch }), 404);
     }
 
     const normalizedPath = normalizeMediaPath(
@@ -32,7 +33,7 @@ export async function GET(
       params.repo,
       params.branch,
     );
-    if (!normalizedPath.startsWith(mediaConfig.input)) throw createHttpError(`Invalid path "${params.path}" for media "${params.name}".`, 400);
+    if (!normalizedPath.startsWith(mediaConfig.input)) throw createHttpError(t("Invalid path \"{path}\" for media \"{name}\".", { path: params.path, name: params.name }), 400);
 
     const { searchParams } = new URL(request.url);
     const nocache = searchParams.get('nocache');

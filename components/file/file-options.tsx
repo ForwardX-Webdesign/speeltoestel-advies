@@ -87,7 +87,7 @@ export function FileOptions({
             method: "DELETE",
           });
 
-          const data = await requireApiSuccess<any>(response, t(t(t("Failed to delete file"))));
+          const data = await requireApiSuccess<any>(response, t("Failed to delete file"));
 
           resolve(data);
         } catch (error) {

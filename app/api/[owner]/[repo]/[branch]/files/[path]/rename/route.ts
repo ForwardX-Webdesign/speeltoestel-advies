@@ -9,6 +9,7 @@ import { createHttpError, toErrorResponse } from "@/lib/api-error";
 import { getBranchHeadSha, setBranchHeadSha } from "@/lib/github-cache-file";
 import { buildCommitTokens, resolveCommitIdentity, resolveCommitMessage } from "@/lib/commit-message";
 import { requireApiUserSession } from "@/lib/session-server";
+import { t } from "@/lib/i18n";
 
 /**
  * Renames a file in a GitHub repository.
@@ -29,16 +30,16 @@ export async function POST(
     const user = sessionResult.user;
 
     const { token } = await getToken(user, params.owner, params.repo, true);
-    if (!token) throw new Error("Token not found");
+    if (!token) throw createHttpError(t("Token not found"), 404);
 
     if (!isContentOperationAllowed("rename", { scope: "settings" }) && params.path === ".pages.yml") {
-      throw createHttpError(`Renaming the settings file isn't allowed.`, 403);
+      throw createHttpError(t("Renaming the settings file isn't allowed."), 403);
     }
 
     const config = await getConfig(params.owner, params.repo, params.branch, {
       getToken: async () => token,
     });
-    if (!config) throw new Error(`Configuration not found for ${params.owner}/${params.repo}/${params.branch}.`);
+    if (!config) throw createHttpError(t("Configuration not found for {owner}/{repo}/{branch}.", { owner: params.owner, repo: params.repo, branch: params.branch }), 404);
 
     const data: any = await request.json();
 
@@ -48,7 +49,7 @@ export async function POST(
 
     const normalizedPath = normalizePath(params.path);
     const normalizedNewPath = normalizePath(data.newPath);
-    if (normalizedPath === normalizedNewPath) throw new Error(`New path "${data.newPath}" is the same as the old path.`);
+    if (normalizedPath === normalizedNewPath) throw createHttpError(t("New path \"{path}\" is the same as the old path.", { path: data.newPath }), 500);
 
     let schema;
     let schemaCommitTemplates: Record<string, string> | undefined;
@@ -59,40 +60,40 @@ export async function POST(
         if (!data.name) throw new Error(`"name" is required for content.`);
 
         schema = getSchemaByName(config.object, data.name);
-        if (!schema) throw new Error(`Content schema not found for ${data.name}.`);
+        if (!schema) throw createHttpError(t("Content schema not found for {name}.", { name: data.name }), 404);
         if (!isContentOperationAllowed("rename", { schema })) {
-          throw createHttpError(`Renaming entries isn't allowed for "${data.name}".`, 403);
+          throw createHttpError(t("Renaming entries isn't allowed for \"{name}\".", { name: data.name }), 403);
         }
         schemaCommitTemplates = schema?.commit?.templates;
         schemaCommitIdentity = schema?.commit?.identity;
 
-        if (schema.type === "file") throw new Error(`Renaming content of type "file" isn't allowed.`);
+        if (schema.type === "file") throw createHttpError(t("Renaming content of type \"file\" isn't allowed."), 500);
         
-        if (!normalizedPath.startsWith(schema.path)) throw new Error(`Invalid path "${params.path}" for ${data.type} "${data.name}".`);
-        if (!normalizedNewPath.startsWith(schema.path)) throw new Error(`Invalid path "${data.newPath}" for ${data.type} "${data.name}".`);
+        if (!normalizedPath.startsWith(schema.path)) throw createHttpError(t("Invalid path \"{path}\" for {type} \"{name}\".", { path: params.path, type: data.type, name: data.name }), 400);
+        if (!normalizedNewPath.startsWith(schema.path)) throw createHttpError(t("Invalid path \"{path}\" for {type} \"{name}\".", { path: data.newPath, type: data.type, name: data.name }), 400);
 
-        if (getFileExtension(normalizedPath) !== (schema.extension ?? "")) throw new Error(`Invalid extension "${getFileExtension(normalizedPath)}" for ${data.type} "${data.name}".`);
-        if (getFileExtension(normalizedNewPath) !== (schema.extension ?? "")) throw new Error(`Invalid extension "${getFileExtension(normalizedNewPath)}" for ${data.type} "${data.name}".`);
+        if (getFileExtension(normalizedPath) !== (schema.extension ?? "")) throw createHttpError(t("Invalid extension \"{extension}\" for {type} \"{name}\".", { extension: getFileExtension(normalizedPath), type: data.type, name: data.name }), 400);
+        if (getFileExtension(normalizedNewPath) !== (schema.extension ?? "")) throw createHttpError(t("Invalid extension \"{extension}\" for {type} \"{name}\".", { extension: getFileExtension(normalizedNewPath), type: data.type, name: data.name }), 400);
         break;
       case "media":
         if (!data.name) throw new Error(`"name" is required for media.`);
 
         schema = getSchemaByName(config.object, data.name, "media");
-        if (!schema) throw new Error(`Media schema not found for ${data.name}.`);
+        if (!schema) throw createHttpError(t("Media schema not found for {name}.", { name: data.name }), 404);
         schemaCommitTemplates = schema?.commit?.templates;
         schemaCommitIdentity = schema?.commit?.identity;
         
-        if (!normalizedPath.startsWith(schema.input)) throw new Error(`Invalid path "${params.path}" for media.`);
-        if (!normalizedNewPath.startsWith(schema.input)) throw new Error(`Invalid path "${data.newPath}" for media.`);
+        if (!normalizedPath.startsWith(schema.input)) throw createHttpError(t("Invalid path \"{path}\" for media.", { path: params.path }), 400);
+        if (!normalizedNewPath.startsWith(schema.input)) throw createHttpError(t("Invalid path \"{path}\" for media.", { path: data.newPath }), 400);
         
         if (
           schema.extensions?.length > 0 &&
           !schema.extensions.includes(getFileExtension(normalizedPath))
-        ) throw new Error(`Invalid extension "${getFileExtension(normalizedPath)}" for media.`);
+        ) throw createHttpError(t("Invalid extension \"{extension}\" for media.", { extension: getFileExtension(normalizedPath) }), 400);
         if (
           schema.extensions?.length > 0 &&
           !schema.extensions.includes(getFileExtension(normalizedNewPath))
-        ) throw new Error(`Invalid extension "${getFileExtension(normalizedNewPath)}" for media.`);
+        ) throw createHttpError(t("Invalid extension \"{extension}\" for media.", { extension: getFileExtension(normalizedNewPath) }), 400);
         break;
     }
 
@@ -146,7 +147,7 @@ export async function POST(
     // TODO: remove success message in backend 
     return Response.json({
       status: "success",
-      message: `File "${normalizedPath}" moved to "${normalizedNewPath}".`,
+      message: t("File \"{path}\" moved to \"{newPath}\".", { path: normalizedPath, newPath: normalizedNewPath }),
       data: {
         path: response?.path,
         newPath: response?.newPath,

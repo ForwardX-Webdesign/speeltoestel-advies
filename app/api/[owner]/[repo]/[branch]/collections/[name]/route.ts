@@ -8,6 +8,7 @@ import { getRepoReadContext } from "@/lib/api-repo-context";
 import { normalizePath } from "@/lib/utils/file";
 import { getCollectionCache } from "@/lib/github-cache-file";
 import { createHttpError, toErrorResponse } from "@/lib/api-error";
+import { t } from "@/lib/i18n";
 
 /**
  * Fetches and parses collection contents from GitHub repositories
@@ -28,7 +29,7 @@ export async function GET(
     const { token, config } = await getRepoReadContext(params);
 
     const schema = getSchemaByName(config.object, params.name);
-    if (!schema) throw createHttpError(`Schema not found for ${params.name}.`, 404);
+    if (!schema) throw createHttpError(t("Schema not found for {name}.", { name: params.name }), 404);
 
     const searchParams = request.nextUrl.searchParams;
     const path = searchParams.get("path") || "";
@@ -37,10 +38,10 @@ export async function GET(
     const fields = searchParams.get("fields")?.split(",") || ["name"];
 
     const normalizedPath = normalizePath(path);
-    if (!normalizedPath.startsWith(schema.path)) throw createHttpError(`Invalid path "${path}" for collection "${params.name}".`, 400);
+    if (!normalizedPath.startsWith(schema.path)) throw createHttpError(t("Invalid path \"{path}\" for collection \"{name}\".", { path, name: params.name }), 400);
 
     if (schema.subfolders === false) {
-      if (normalizedPath !== schema.path) throw createHttpError(`Invalid path "${path}" for collection "${params.name}".`, 400);
+      if (normalizedPath !== schema.path) throw createHttpError(t("Invalid path \"{path}\" for collection \"{name}\".", { path, name: params.name }), 400);
     }
 
     let entries = await getCollectionCache(params.owner, params.repo, params.branch, normalizedPath, token, schema.view?.node?.filename);

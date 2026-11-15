@@ -15,6 +15,7 @@ import { User } from "@/types/user";
 import { getGithubAccount } from "@/lib/github-account";
 import { createHttpError } from "@/lib/api-error";
 import { collaboratorMatchesUserForRepo } from "@/lib/collaborator-access";
+import { t } from "@/lib/i18n";
 
 const installationTokenRefreshInFlight = new Map<number, Promise<string>>();
 
@@ -48,13 +49,13 @@ const getToken = cache(async (
 
   if (githubAccount?.accessToken && verifyGithubAccess) {
     throw createHttpError(
-      `You do not have permission to access "${owner}/${repo}".`,
+      t("You do not have permission to access \"{owner}/{repo}\".", { owner, repo }),
       403,
     );
   }
 
   throw createHttpError(
-    `You do not have permission to access "${owner}/${repo}".`,
+    t("You do not have permission to access \"{owner}/{repo}\".", { owner, repo }),
     403,
   );
 });

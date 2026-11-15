@@ -7,6 +7,7 @@ import { assertGithubIdentity } from "@/lib/authz-shared";
 import { getToken } from "@/lib/token";
 import { createHttpError, toErrorResponse } from "@/lib/api-error";
 import { requireApiUserSession } from "@/lib/session-server";
+import { t } from "@/lib/i18n";
 
 /**
  * Fetches the history of a file from GitHub repositories.
@@ -27,7 +28,7 @@ export async function GET(
     const user = sessionResult.user;
 
     const { token } = await getToken(user, params.owner, params.repo);
-    if (!token) throw createHttpError("Token not found", 401);
+    if (!token) throw createHttpError(t("Token not found"), 401);
 
     const searchParams = request.nextUrl.searchParams;
     const name = searchParams.get("name") || "";
@@ -41,16 +42,16 @@ export async function GET(
       const config = await getConfig(params.owner, params.repo, params.branch, {
         getToken: async () => token,
       });
-      if (!config) throw createHttpError(`Configuration not found for ${params.owner}/${params.repo}/${params.branch}.`, 404);
+      if (!config) throw createHttpError(t("Configuration not found for {owner}/{repo}/{branch}.", { owner: params.owner, repo: params.repo, branch: params.branch }), 404);
       
       const schema = getSchemaByName(config.object, name);
-      if (!schema) throw createHttpError(`Schema not found for ${name}.`, 404);
+      if (!schema) throw createHttpError(t("Schema not found for {name}.", { name }), 404);
 
-      if (!normalizedPath.startsWith(schema.path)) throw createHttpError(`Invalid path "${params.path}" for ${schema.type} "${name}".`, 400);
+      if (!normalizedPath.startsWith(schema.path)) throw createHttpError(t("Invalid path \"{path}\" for {type} \"{name}\".", { path: params.path, type: schema.type, name }), 400);
 
       const extension = schema.extension ?? "";
       if (getFileExtension(normalizedPath) !== extension) {
-        throw createHttpError(`Invalid extension "${getFileExtension(normalizedPath)}" for ${schema.type} "${name}".`, 400);
+        throw createHttpError(t("Invalid extension \"{extension}\" for {type} \"{name}\".", { extension: getFileExtension(normalizedPath), type: schema.type, name }), 400);
       }
     } else if (normalizedPath !== ".pages.yml") {
       throw createHttpError("If no content entry name is provided, the path must be \".pages.yml\".", 400);

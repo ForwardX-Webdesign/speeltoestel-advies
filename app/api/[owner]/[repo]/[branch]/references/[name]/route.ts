@@ -15,6 +15,7 @@ import { getRepoReadContext } from "@/lib/api-repo-context";
 import { normalizePath } from "@/lib/utils/file";
 import { getCollectionCache } from "@/lib/github-cache-file";
 import { createHttpError, toErrorResponse } from "@/lib/api-error";
+import { t } from "@/lib/i18n";
 
 type ParsedReferenceItem = {
   name: string;
@@ -37,7 +38,7 @@ export async function GET(
     const { token, config } = await getRepoReadContext(params);
 
     const schema = getSchemaByName(config.object, params.name);
-    if (!schema) throw createHttpError(`Schema not found for ${params.name}.`, 404);
+    if (!schema) throw createHttpError(t("Schema not found for {name}.", { name: params.name }), 404);
 
     const searchParams = request.nextUrl.searchParams;
     const query = searchParams.get("query") || "";
@@ -54,7 +55,7 @@ export async function GET(
     ]));
 
     const normalizedPath = normalizePath(schema.path || "");
-    if (!normalizedPath) throw createHttpError(`Invalid path for collection "${params.name}".`, 400);
+    if (!normalizedPath) throw createHttpError(t("Invalid path for collection \"{name}\".", { name: params.name }), 400);
 
     let entries = await getCollectionCache(
       params.owner,

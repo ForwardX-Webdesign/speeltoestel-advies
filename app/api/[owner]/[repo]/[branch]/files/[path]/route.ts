@@ -14,6 +14,7 @@ import { createHttpError, toErrorResponse } from "@/lib/api-error";
 import mergeWith from "lodash.mergewith";
 import { buildCommitTokens, resolveCommitIdentity, resolveCommitMessage } from "@/lib/commit-message";
 import { requireApiUserSession } from "@/lib/session-server";
+import { t } from "@/lib/i18n";
 
 /**
  * Create, update and delete individual files in a GitHub repository.
@@ -35,14 +36,14 @@ export async function POST(
     const user = sessionResult.user;
 
     const { token } = await getToken(user, params.owner, params.repo, true);
-    if (!token) throw new Error("Token not found");
+    if (!token) throw createHttpError(t("Token not found"), 404);
 
     const normalizedPath = normalizePath(params.path);
 
     const config = await getConfig(params.owner, params.repo, params.branch, {
       getToken: async () => token,
     });
-    if (!config && normalizedPath !== ".pages.yml") throw new Error(`Configuration not found for ${params.owner}/${params.repo}/${params.branch}.`);
+    if (!config && normalizedPath !== ".pages.yml") throw createHttpError(t("Configuration not found for {owner}/{repo}/{branch}.", { owner: params.owner, repo: params.repo, branch: params.branch }), 404);
 
     const data: any = await request.json();
     const onConflict = data.onConflict === "error" ? "error" : "rename";
@@ -57,24 +58,24 @@ export async function POST(
         if (!data.name) throw new Error(`"name" is required for content.`);
 
         schema = getSchemaByName(config?.object, data.name);
-        if (!schema) throw new Error(`Content schema not found for ${data.name}.`);
+        if (!schema) throw createHttpError(t("Content schema not found for {name}.", { name: data.name }), 404);
         if (!data.sha && !isContentOperationAllowed("create", { schema })) {
-          throw createHttpError(`Creating entries isn't allowed for "${data.name}".`, 403);
+          throw createHttpError(t("Creating entries isn't allowed for \"{name}\".", { name: data.name }), 403);
         }
         schemaCommitTemplates = schema?.commit?.templates;
         schemaCommitIdentity = schema?.commit?.identity;
 
-        if (!normalizedPath.startsWith(schema.path)) throw new Error(`Invalid path "${params.path}" for ${data.type} "${data.name}".`);
+        if (!normalizedPath.startsWith(schema.path)) throw createHttpError(t("Invalid path \"{path}\" for {type} \"{name}\".", { path: params.path, type: data.type, name: data.name }), 400);
 
         if (schema.subfolders === false && getParentPath(normalizedPath) !== schema.path) {
-          throw new Error(`Subfolders are not allowed for collection "${data.name}".`);
+          throw createHttpError(t("Subfolders are not allowed for collection \"{name}\".", { name: data.name }), 500);
         }
 
         if (getFileName(normalizedPath) === ".gitkeep") {
           // Folder creation
           contentBase64 = "";
         } else {
-          if (getFileExtension(normalizedPath) !== (schema.extension ?? "")) throw new Error(`Invalid extension "${getFileExtension(normalizedPath)}" for ${data.type} "${data.name}".`);
+          if (getFileExtension(normalizedPath) !== (schema.extension ?? "")) throw createHttpError(t("Invalid extension \"{extension}\" for {type} \"{name}\".", { extension: getFileExtension(normalizedPath), type: data.type, name: data.name }), 400);
 
           if (serializedTypes.includes(schema.format) && schema.fields) {
             let contentFields;
@@ -104,7 +105,7 @@ export async function POST(
                 if (error.path.length > 0) message = `${message} at ${error.path.join(".")}`;
                 return message;
               });
-              throw new Error(`Content validation failed: ${errorMessages.join(", ")}`);
+              throw createHttpError(t("Content validation failed: {errors}", { errors: errorMessages.join(", ") }), 400);
             }
 
             const validatedContentObject = deepMap(
@@ -132,7 +133,7 @@ export async function POST(
               });
               
               if (Array.isArray(response.data)) {
-                throw new Error("Expected a file but found a directory");
+                throw createHttpError(t("Expected a file but found a directory"), 500);
               } else if (response.data.type !== "file") {
                 throw new Error("Invalid response type");
               }
@@ -164,11 +165,11 @@ export async function POST(
         if (!data.name) throw new Error(`"name" is required for media.`);
 
         schema = getSchemaByName(config?.object, data.name, "media");
-        if (!schema) throw new Error(`Media schema not found for ${data.name}.`);
+        if (!schema) throw createHttpError(t("Media schema not found for {name}.", { name: data.name }), 404);
         schemaCommitTemplates = schema?.commit?.templates;
         schemaCommitIdentity = schema?.commit?.identity;
 
-        if (!normalizedPath.startsWith(schema.input)) throw new Error(`Invalid path "${params.path}" for media "${data.name}".`);
+        if (!normalizedPath.startsWith(schema.input)) throw createHttpError(t("Invalid path \"{path}\" for media \"{name}\".", { path: params.path, name: data.name }), 400);
         
         if (getFileName(normalizedPath) === ".gitkeep") {
           // Folder creation
@@ -177,7 +178,7 @@ export async function POST(
           if (
             schema.extensions?.length > 0 &&
             !schema.extensions.includes(getFileExtension(normalizedPath))
-          ) throw new Error(`Invalid extension "${getFileExtension(normalizedPath)}" for media.`);
+          ) throw createHttpError(t("Invalid extension \"{extension}\" for media.", { extension: getFileExtension(normalizedPath) }), 400);
 
           contentBase64 = data.content;
         }
@@ -186,7 +187,7 @@ export async function POST(
         assertGithubIdentity(user, "Only GitHub users can manage settings.");
         if (normalizedPath !== ".pages.yml") throw new Error(`Invalid path "${params.path}" for settings.`);
         if (!data.sha && !isContentOperationAllowed("create", { scope: "settings" })) {
-          throw createHttpError(`Creating the settings file isn't allowed.`, 403);
+          throw createHttpError(t("Creating the settings file isn't allowed."), 403);
         }
 
         contentBase64 = Buffer.from(data.content.body ?? "").toString("base64");
@@ -270,8 +271,8 @@ export async function POST(
     return Response.json({
       status: "success",
       message: savedPath !== normalizedPath
-        ? `File "${normalizedPath}" saved successfully but renamed to "${savedPath}" to avoid naming conflict.`
-        : `File "${normalizedPath}" saved successfully.`,
+        ? t("File \"{path}\" saved successfully but renamed to \"{savedPath}\" to avoid naming conflict.", { path: normalizedPath, savedPath })
+        : t("File \"{path}\" saved successfully.", { path: normalizedPath }),
       data: {
         type: response?.data.content?.type,
         sha: response?.data.content?.sha,
@@ -352,14 +353,14 @@ const githubSaveFile = async (
     if (error.status === 409) {
       if (githubMessage?.includes("Repository rule violations found")) {
         throw createHttpError(
-          "This repository requires changes through a pull request. Save to a different branch or fork, or ask a maintainer to relax the repository rule for direct edits.",
+          t("This repository requires changes through a pull request. Save to a different branch or fork, or ask a maintainer to relax the repository rule for direct edits."),
           409,
         );
       }
 
       if (sha) {
         throw createHttpError(
-          "File has changed since you last loaded it. Please refresh the page and try again.",
+          t("File has changed since you last loaded it. Please refresh the page and try again."),
           409,
         );
       }
@@ -368,7 +369,7 @@ const githubSaveFile = async (
     // Only handle 422 errors for new files (no sha)
     if (error.status === 422 && !sha) {
       if (options?.onConflict === "error") {
-        throw createHttpError(`File \"${path}\" already exists.`, 409);
+        throw createHttpError(t("File \"{path}\" already exists.", { path }), 409);
       }
 
       // Get directory contents to find next available name
@@ -457,10 +458,10 @@ export async function DELETE(
     const user = sessionResult.user;
 
     const { token } = await getToken(user, params.owner, params.repo, true);
-    if (!token) throw new Error("Token not found");
+    if (!token) throw createHttpError(t("Token not found"), 404);
 
     if (!isContentOperationAllowed("delete", { scope: "settings" }) && params.path === ".pages.yml") {
-      throw createHttpError(`Deleting the settings file isn't allowed.`, 403);
+      throw createHttpError(t("Deleting the settings file isn't allowed."), 403);
     }
 
     const searchParams = request.nextUrl.searchParams;
@@ -475,7 +476,7 @@ export async function DELETE(
     const config = await getConfig(params.owner, params.repo, params.branch, {
       getToken: async () => token,
     });
-    if (!config) throw new Error(`Configuration not found for ${params.owner}/${params.repo}/${params.branch}.`);
+    if (!config) throw createHttpError(t("Configuration not found for {owner}/{repo}/{branch}.", { owner: params.owner, repo: params.repo, branch: params.branch }), 404);
 
     const normalizedPath = normalizePath(params.path);
     let schema;
@@ -487,35 +488,35 @@ export async function DELETE(
         if (!name) throw new Error(`"name" is required for content.`);
 
         schema = getSchemaByName(config.object, name);
-        if (!schema) throw new Error(`Content schema not found for ${name}.`);
+        if (!schema) throw createHttpError(t("Content schema not found for {name}.", { name }), 404);
         if (!isContentOperationAllowed("delete", { schema })) {
-          throw createHttpError(`Deleting entries isn't allowed for "${name}".`, 403);
+          throw createHttpError(t("Deleting entries isn't allowed for \"{name}\".", { name }), 403);
         }
         schemaCommitTemplates = schema?.commit?.templates;
         schemaCommitIdentity = schema?.commit?.identity;
         
-        if (!normalizedPath.startsWith(schema.path)) throw new Error(`Invalid path "${params.path}" for ${type} "${name}".`);
+        if (!normalizedPath.startsWith(schema.path)) throw createHttpError(t("Invalid path \"{path}\" for {type} \"{name}\".", { path: params.path, type, name }), 400);
         
         if (schema.subfolders === false && getParentPath(normalizedPath) !== schema.path) {
-          throw new Error(`Subfolders are not allowed for collection "${name}".`);
+          throw createHttpError(t("Subfolders are not allowed for collection \"{name}\".", { name }), 500);
         }
         
-        if (getFileExtension(normalizedPath) !== (schema.extension ?? "")) throw new Error(`Invalid extension "${getFileExtension(normalizedPath)}" for ${type} "${name}".`);
+        if (getFileExtension(normalizedPath) !== (schema.extension ?? "")) throw createHttpError(t("Invalid extension \"{extension}\" for {type} \"{name}\".", { extension: getFileExtension(normalizedPath), type, name }), 400);
         break;
       case "media":
         if (!name) throw new Error(`"name" is required for media.`);
 
         schema = getSchemaByName(config.object, name, "media");
-        if (!schema) throw new Error(`Media schema not found for ${name}.`);
+        if (!schema) throw createHttpError(t("Media schema not found for {name}.", { name }), 404);
         schemaCommitTemplates = schema?.commit?.templates;
         schemaCommitIdentity = schema?.commit?.identity;
 
-        if (!normalizedPath.startsWith(schema.input)) throw new Error(`Invalid path "${params.path}" for media "${name}".`);
+        if (!normalizedPath.startsWith(schema.input)) throw createHttpError(t("Invalid path \"{path}\" for media \"{name}\".", { path: params.path, name }), 400);
 
         if (
           schema.extensions?.length > 0 &&
           !schema.extensions.includes(getFileExtension(normalizedPath))
-        ) throw new Error(`Invalid extension "${getFileExtension(normalizedPath)}" for media.`);
+        ) throw createHttpError(t("Invalid extension \"{extension}\" for media.", { extension: getFileExtension(normalizedPath) }), 400);
         break;
     }
 
@@ -581,7 +582,7 @@ export async function DELETE(
 
     return Response.json({
       status: "success",
-      message: `File "${normalizedPath}" deleted successfully.`,
+      message: t("File \"{path}\" deleted successfully.", { path: normalizedPath }),
       data: {
         sha: response?.data.commit.sha,
         name: response?.data.content?.name,

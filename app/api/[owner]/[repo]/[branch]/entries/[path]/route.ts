@@ -9,6 +9,7 @@ import { assertGithubIdentity } from "@/lib/authz-shared";
 import { getToken } from "@/lib/token";
 import { createHttpError, toErrorResponse } from "@/lib/api-error";
 import { requireApiUserSession } from "@/lib/session-server";
+import { t } from "@/lib/i18n";
 
 /**
  * Fetches and parses individual file contents from GitHub repositories
@@ -31,7 +32,7 @@ export async function GET(
     const user = sessionResult.user;
 
     const { token } = await getToken(user, params.owner, params.repo);
-    if (!token) throw createHttpError("Token not found", 401);
+    if (!token) throw createHttpError(t("Token not found"), 401);
 
     const searchParams = request.nextUrl.searchParams;
     const name = searchParams.get("name");
@@ -69,16 +70,16 @@ export async function GET(
       config = await getConfig(params.owner, params.repo, params.branch, {
         getToken: async () => token,
       });
-      if (!config) throw createHttpError(`Configuration not found for ${params.owner}/${params.repo}/${params.branch}.`, 404);
+      if (!config) throw createHttpError(t("Configuration not found for {owner}/{repo}/{branch}.", { owner: params.owner, repo: params.repo, branch: params.branch }), 404);
 
       schema = getSchemaByName(config.object, name);
-      if (!schema) throw createHttpError(`Schema not found for ${name}.`, 404);
+      if (!schema) throw createHttpError(t("Schema not found for {name}.", { name }), 404);
 
-      if (!normalizedPath.startsWith(schema.path)) throw createHttpError(`Invalid path "${params.path}" for ${schema.type} "${name}".`, 400);
+      if (!normalizedPath.startsWith(schema.path)) throw createHttpError(t("Invalid path \"{path}\" for {type} \"{name}\".", { path: params.path, type: schema.type, name }), 400);
 
       const extension = schema.extension ?? "";
       if (getFileExtension(normalizedPath) !== extension) {
-        throw createHttpError(`Invalid extension "${getFileExtension(normalizedPath)}" for ${schema.type} "${name}".`, 400);
+        throw createHttpError(t("Invalid extension \"{extension}\" for {type} \"{name}\".", { extension: getFileExtension(normalizedPath), type: schema.type, name }), 400);
       }
     } else {
       config = {};
@@ -101,7 +102,7 @@ export async function GET(
     }
     
     if (Array.isArray(response.data)) {
-      throw createHttpError("Expected a file but found a directory", 400);
+      throw createHttpError(t("Expected a file but found a directory"), 400);
     } else if (response.data.type !== "file") {
       throw createHttpError("Invalid response type", 500);
     }
@@ -167,7 +168,7 @@ const parseContent = (
       );
       if (schema.list) contentObject = contentObject.listWrapper;
     } catch (error: any) {
-      throw createHttpError(`Error parsing frontmatter: ${error.message}`, 400);
+      throw createHttpError(t("Error parsing frontmatter: {message}", { message: error.message }), 400);
     }
   } else {
     contentObject = { body: content };

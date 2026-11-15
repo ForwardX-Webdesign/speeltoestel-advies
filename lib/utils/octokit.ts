@@ -5,6 +5,7 @@
 
 import { Octokit } from "@octokit/rest";
 import { createHttpError } from "@/lib/api-error";
+import { t } from "@/lib/i18n";
 
 const getRetryAfter = (response: Response) => {
   const retryAfter = response.headers.get("retry-after");
@@ -64,8 +65,8 @@ export const createOctokitInstance = (token: string, options?: any) => {
             const retryAfter = getRetryAfter(response);
             throw createHttpError(
               retryAfter
-                ? `GitHub rate limit reached. Please wait ${retryAfter} seconds and try again.`
-                : "GitHub rate limit reached. Please wait a minute and try again.",
+                ? t("GitHub rate limit reached. Please wait {seconds} seconds and try again.", { seconds: retryAfter })
+                : t("GitHub rate limit reached. Please wait a minute and try again."),
               429,
               retryAfter ? { "Retry-After": retryAfter } : undefined,
             );
