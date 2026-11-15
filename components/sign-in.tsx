@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Logo } from "@/components/logo";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
@@ -145,12 +146,12 @@ export function SignIn() {
         ForwardX
       </a>
       .{" "}
-      <a
+      <Link
         className="underline hover:decoration-muted-foreground/50"
         href="/uitleg#inloggen"
       >
         {t("Need help signing in?")}
-      </a>
+      </Link>
     </p>
   );
 
